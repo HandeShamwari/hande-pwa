@@ -75,10 +75,10 @@ export default function DriverRegisterPage() {
         vehicleType: formData.vehicleType,
         vehicleMake: formData.vehicleMake,
         vehicleModel: formData.vehicleModel,
-        vehicleYear: formData.vehicleYear,
-        vehiclePlate: formData.vehiclePlate,
+        vehicleYear: Number(formData.vehicleYear),
+        vehiclePlate: formData.vehiclePlate.toUpperCase(),
         vehicleColor: formData.vehicleColor,
-        licenseNumber: formData.licenseNumber,
+        licenseNumber: formData.licenseNumber.toUpperCase(),
       });
 
       dispatch(setCredentials({
