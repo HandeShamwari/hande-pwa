@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
-import { Eye, EyeOff, ChevronLeft } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { setCredentials, setUserType } from '@/store/slices/authSlice';
 import authApi from '@/api/auth';
 
@@ -93,49 +93,47 @@ export default function DriverRegisterPage() {
 
   return (
     <div className="min-h-screen bg-white flex flex-col px-6 safe-area-top safe-area-bottom">
-      {/* Header */}
-      <div className="pt-12 pb-4">
+      {/* Header with Logo */}
+      <div className="pt-16 pb-6">
         <Image
           src="/logo.png"
           alt="Hande"
-          width={80}
-          height={80}
+          width={120}
+          height={120}
           className="mx-auto"
           priority
         />
       </div>
 
       {/* Title */}
-      <div className="text-center mb-4">
+      <div className="text-center mb-8">
         <h1 className="text-xl font-semibold text-black mb-1">
-          Become a Driver
+          {step === 1 ? 'Become a Driver' : 'Vehicle Details'}
         </h1>
         <p className="text-gray-400 text-sm">
-          No commission. Just <span className="text-accent font-bold">$1</span>/day
+          {step === 1 ? 'Enter your personal information' : 'Tell us about your vehicle'}
         </p>
       </div>
 
       {/* Progress */}
-      <div className="flex items-center justify-center gap-2 mb-6">
-        <div className={`w-16 h-1.5 rounded-full ${step >= 1 ? 'bg-primary' : 'bg-gray-200'}`} />
-        <div className={`w-16 h-1.5 rounded-full ${step >= 2 ? 'bg-primary' : 'bg-gray-200'}`} />
+      <div className="flex items-center justify-center gap-3 mb-8">
+        <div className={`w-20 h-1.5 rounded-full ${step >= 1 ? 'bg-primary' : 'bg-gray-200'}`} />
+        <div className={`w-20 h-1.5 rounded-full ${step >= 2 ? 'bg-primary' : 'bg-gray-200'}`} />
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="flex-1">
+      <form onSubmit={handleSubmit} className="space-y-4 flex-1">
         {/* Step 1: Personal Info */}
         {step === 1 && (
-          <div className="space-y-3">
-            <p className="text-sm font-medium text-gray-500 mb-2">Step 1: Personal Info</p>
-            
-            <div className="grid grid-cols-2 gap-3">
+          <>
+            <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
                 name="firstName"
                 placeholder="First name"
                 value={formData.firstName}
                 onChange={handleChange}
-                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                 required
               />
               <input
@@ -144,7 +142,7 @@ export default function DriverRegisterPage() {
                 placeholder="Last name"
                 value={formData.lastName}
                 onChange={handleChange}
-                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                 required
               />
             </div>
@@ -155,7 +153,7 @@ export default function DriverRegisterPage() {
               placeholder="Email address"
               value={formData.email}
               onChange={handleChange}
-              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
               required
             />
 
@@ -165,7 +163,7 @@ export default function DriverRegisterPage() {
               placeholder="Phone number"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
               required
             />
 
@@ -176,7 +174,7 @@ export default function DriverRegisterPage() {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full px-4 py-3.5 pr-12 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                className="w-full px-4 py-4 pr-12 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                 required
               />
               <button
@@ -193,23 +191,21 @@ export default function DriverRegisterPage() {
             <button
               type="button"
               onClick={handleNext}
-              className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all mt-4"
+              className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all"
             >
               Continue
             </button>
-          </div>
+          </>
         )}
 
         {/* Step 2: Vehicle Info */}
         {step === 2 && (
-          <div className="space-y-3">
-            <p className="text-sm font-medium text-gray-500 mb-2">Step 2: Vehicle Info</p>
-            
+          <>
             <select
               name="vehicleType"
               value={formData.vehicleType}
               onChange={handleChange}
-              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
             >
               {VEHICLE_TYPES.map((type) => (
                 <option key={type} value={type}>
@@ -218,14 +214,14 @@ export default function DriverRegisterPage() {
               ))}
             </select>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <input
                 type="text"
                 name="vehicleMake"
                 placeholder="Make (Toyota)"
                 value={formData.vehicleMake}
                 onChange={handleChange}
-                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                 required
               />
               <input
@@ -234,19 +230,19 @@ export default function DriverRegisterPage() {
                 placeholder="Model (Corolla)"
                 value={formData.vehicleModel}
                 onChange={handleChange}
-                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                 required
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <input
                 type="number"
                 name="vehicleYear"
                 placeholder="Year"
                 value={formData.vehicleYear}
                 onChange={handleChange}
-                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                 required
               />
               <input
@@ -255,7 +251,7 @@ export default function DriverRegisterPage() {
                 placeholder="Color"
                 value={formData.vehicleColor}
                 onChange={handleChange}
-                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
                 required
               />
             </div>
@@ -266,7 +262,7 @@ export default function DriverRegisterPage() {
               placeholder="Plate number"
               value={formData.vehiclePlate}
               onChange={handleChange}
-              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
               required
             />
 
@@ -276,19 +272,18 @@ export default function DriverRegisterPage() {
               placeholder="Driver's license number"
               value={formData.licenseNumber}
               onChange={handleChange}
-              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
               required
             />
 
             {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-            <div className="flex gap-3 mt-4">
+            <div className="flex gap-4">
               <button
                 type="button"
                 onClick={handleBack}
-                className="flex-1 py-4 bg-gray-100 text-black font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-4 bg-gray-100 text-black font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition-all"
               >
-                <ChevronLeft size={20} />
                 Back
               </button>
               <button
@@ -299,18 +294,25 @@ export default function DriverRegisterPage() {
                 {isLoading ? 'Registering...' : 'Complete'}
               </button>
             </div>
-          </div>
+          </>
         )}
       </form>
 
-      {/* Bottom */}
-      <div className="py-6">
+      {/* Bottom Section */}
+      <div className="py-8 space-y-4">
         <p className="text-center text-gray-500">
           Already have an account?{' '}
           <Link href="/login" className="text-primary font-semibold">
             Sign In
           </Link>
         </p>
+
+        {/* $1/day highlight */}
+        <div className="text-center">
+          <p className="text-sm text-gray-400">
+            No commission. Just <span className="text-accent font-bold">$1</span>/day
+          </p>
+        </div>
       </div>
     </div>
   );

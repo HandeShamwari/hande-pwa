@@ -69,19 +69,19 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col px-6 safe-area-top safe-area-bottom">
       {/* Header with Logo */}
-      <div className="pt-12 pb-4">
+      <div className="pt-16 pb-6">
         <Image
           src="/logo.png"
           alt="Hande"
-          width={80}
-          height={80}
+          width={120}
+          height={120}
           className="mx-auto"
           priority
         />
       </div>
 
       {/* Welcome Text */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-8">
         <h1 className="text-xl font-semibold text-black mb-1">
           Create Account
         </h1>
@@ -91,16 +91,16 @@ export default function RegisterPage() {
       </div>
 
       {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-3 flex-1">
+      <form onSubmit={handleSubmit} className="space-y-4 flex-1">
         {/* Name Row */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           <input
             type="text"
             name="firstName"
             placeholder="First name"
             value={formData.firstName}
             onChange={handleChange}
-            className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+            className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
             required
           />
           <input
@@ -109,7 +109,7 @@ export default function RegisterPage() {
             placeholder="Last name"
             value={formData.lastName}
             onChange={handleChange}
-            className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+            className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
             required
           />
         </div>
@@ -121,7 +121,7 @@ export default function RegisterPage() {
           placeholder="Email address"
           value={formData.email}
           onChange={handleChange}
-          className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+          className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
           required
         />
 
@@ -132,7 +132,7 @@ export default function RegisterPage() {
           placeholder="Phone number"
           value={formData.phone}
           onChange={handleChange}
-          className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+          className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
         />
 
         {/* Password */}
@@ -143,7 +143,7 @@ export default function RegisterPage() {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
-            className="w-full px-4 py-3.5 pr-12 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+            className="w-full px-4 py-4 pr-12 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
             required
           />
           <button
@@ -162,7 +162,7 @@ export default function RegisterPage() {
           placeholder="Confirm password"
           value={formData.confirmPassword}
           onChange={handleChange}
-          className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+          className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
           required
         />
 
@@ -175,13 +175,13 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-50 mt-2"
+          className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-50"
         >
           {isLoading ? 'Creating account...' : 'Create Account'}
         </button>
 
         {/* Divider */}
-        <div className="flex items-center gap-4 my-4">
+        <div className="flex items-center gap-4 my-6">
           <div className="flex-1 h-px bg-gray-200" />
           <span className="text-gray-400 text-sm">or</span>
           <div className="flex-1 h-px bg-gray-200" />
@@ -192,7 +192,7 @@ export default function RegisterPage() {
       </form>
 
       {/* Bottom Section */}
-      <div className="py-6 space-y-3">
+      <div className="py-8 space-y-4">
         {/* Sign In */}
         <p className="text-center text-gray-500">
           Already have an account?{' '}
