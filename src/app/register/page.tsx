@@ -3,11 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useDispatch } from 'react-redux';
-import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import { Eye, EyeOff } from 'lucide-react';
 import { GoogleSignInButton } from '@/components/auth/google-sign-in-button';
 import { setCredentials } from '@/store/slices/authSlice';
 import authApi from '@/api/auth';
@@ -69,128 +67,148 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-bg flex flex-col items-center justify-center p-4 safe-area-top safe-area-bottom">
-      {/* Logo */}
-      <div className="mb-6 text-center">
-        <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
-          <span className="text-white text-2xl font-bold">H</span>
-        </div>
-        <h1 className="text-xl font-bold text-dark">Create Account</h1>
-        <p className="text-gray-500 text-sm mt-1">Join Hande as a rider</p>
+    <div className="min-h-screen bg-white flex flex-col px-6 safe-area-top safe-area-bottom">
+      {/* Header with Logo */}
+      <div className="pt-12 pb-4">
+        <Image
+          src="/logo.png"
+          alt="Hande"
+          width={80}
+          height={80}
+          className="mx-auto"
+          priority
+        />
       </div>
 
-      {/* Register Form */}
-      <Card variant="elevated" className="w-full max-w-md">
-        {/* Google Sign Up */}
-        <GoogleSignInButton mode="signup" />
+      {/* Welcome Text */}
+      <div className="text-center mb-6">
+        <h1 className="text-xl font-semibold text-black mb-1">
+          Create Account
+        </h1>
+        <p className="text-gray-400 text-sm">
+          Join Hande as a rider
+        </p>
+      </div>
 
-        {/* Divider */}
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-4 bg-white text-gray-500">or register with email</span>
-          </div>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            label="First Name"
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-3 flex-1">
+        {/* Name Row */}
+        <div className="grid grid-cols-2 gap-3">
+          <input
+            type="text"
             name="firstName"
-            placeholder="Enter your first name"
+            placeholder="First name"
             value={formData.firstName}
             onChange={handleChange}
-            icon={<User size={20} />}
+            className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
             required
           />
-
-          <Input
-            label="Last Name"
+          <input
+            type="text"
             name="lastName"
-            placeholder="Enter your last name"
+            placeholder="Last name"
             value={formData.lastName}
             onChange={handleChange}
-            icon={<User size={20} />}
+            className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
             required
           />
+        </div>
 
-          <Input
-            label="Email"
-            name="email"
-            type="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-            icon={<Mail size={20} />}
-            required
-          />
+        {/* Email */}
+        <input
+          type="email"
+          name="email"
+          placeholder="Email address"
+          value={formData.email}
+          onChange={handleChange}
+          className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+          required
+        />
 
-          <Input
-            label="Phone Number"
-            name="phone"
-            type="tel"
-            placeholder="+263 7X XXX XXXX"
-            value={formData.phone}
-            onChange={handleChange}
-            icon={<Phone size={20} />}
-          />
+        {/* Phone */}
+        <input
+          type="tel"
+          name="phone"
+          placeholder="Phone number"
+          value={formData.phone}
+          onChange={handleChange}
+          className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+        />
 
-          <div className="relative">
-            <Input
-              label="Password"
-              name="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Create a password"
-              value={formData.password}
-              onChange={handleChange}
-              icon={<Lock size={20} />}
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-
-          <Input
-            label="Confirm Password"
-            name="confirmPassword"
+        {/* Password */}
+        <div className="relative">
+          <input
             type={showPassword ? 'text' : 'password'}
-            placeholder="Confirm your password"
-            value={formData.confirmPassword}
+            name="password"
+            placeholder="Password"
+            value={formData.password}
             onChange={handleChange}
-            icon={<Lock size={20} />}
+            className="w-full px-4 py-3.5 pr-12 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
             required
           />
-
-          {error && (
-            <p className="text-danger text-sm text-center">{error}</p>
-          )}
-
-          <Button type="submit" fullWidth isLoading={isLoading}>
-            Create Account
-          </Button>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-gray-500">
-            Already have an account?{' '}
-            <Link href="/login" className="text-primary font-medium hover:underline">
-              Sign In
-            </Link>
-          </p>
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
         </div>
 
-        <div className="mt-4 text-center">
-          <Link href="/register/driver" className="text-accent font-medium hover:underline">
-            Want to drive? Register as a driver
+        {/* Confirm Password */}
+        <input
+          type={showPassword ? 'text' : 'password'}
+          name="confirmPassword"
+          placeholder="Confirm password"
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+          required
+        />
+
+        {/* Error */}
+        {error && (
+          <p className="text-red-500 text-sm text-center">{error}</p>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-50 mt-2"
+        >
+          {isLoading ? 'Creating account...' : 'Create Account'}
+        </button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 my-4">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-gray-400 text-sm">or</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
+        {/* Google */}
+        <GoogleSignInButton mode="signup" />
+      </form>
+
+      {/* Bottom Section */}
+      <div className="py-6 space-y-3">
+        {/* Sign In */}
+        <p className="text-center text-gray-500">
+          Already have an account?{' '}
+          <Link href="/login" className="text-primary font-semibold">
+            Sign In
           </Link>
-        </div>
-      </Card>
+        </p>
+
+        {/* Driver CTA */}
+        <Link 
+          href="/register/driver" 
+          className="block text-center py-4 bg-black text-white font-semibold rounded-xl"
+        >
+          Become a Driver — <span className="text-accent">$1</span>/day
+        </Link>
+      </div>
     </div>
   );
 }

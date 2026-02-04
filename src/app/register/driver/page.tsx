@@ -3,11 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useDispatch } from 'react-redux';
-import { Mail, Lock, User, Phone, Car, CreditCard, Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import { Eye, EyeOff, ChevronLeft } from 'lucide-react';
 import { setCredentials, setUserType } from '@/store/slices/authSlice';
 import authApi from '@/api/auth';
 
@@ -23,13 +21,11 @@ export default function DriverRegisterPage() {
   const [error, setError] = useState('');
   
   const [formData, setFormData] = useState({
-    // Personal
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
     password: '',
-    // Vehicle
     vehicleType: 'sedan',
     vehicleMake: '',
     vehicleModel: '',
@@ -44,19 +40,17 @@ export default function DriverRegisterPage() {
   };
 
   const handleNext = () => {
-    if (step === 1) {
-      if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
-        setError('Please fill in all required fields');
-        return;
-      }
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+      setError('Please fill in all required fields');
+      return;
     }
     setError('');
-    setStep(step + 1);
+    setStep(2);
   };
 
   const handleBack = () => {
     setError('');
-    setStep(step - 1);
+    setStep(1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -98,229 +92,224 @@ export default function DriverRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-bg flex flex-col items-center justify-center p-4 safe-area-top safe-area-bottom">
-      {/* Logo */}
-      <div className="mb-6 text-center">
-        <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
-          <Car className="text-white" size={32} />
-        </div>
-        <h1 className="text-xl font-bold text-dark">Become a Driver</h1>
-        <p className="text-gray-500 text-sm mt-1">
-          Earn on your terms - just <span className="price-highlight">$1</span>/day
+    <div className="min-h-screen bg-white flex flex-col px-6 safe-area-top safe-area-bottom">
+      {/* Header */}
+      <div className="pt-12 pb-4">
+        <Image
+          src="/logo.png"
+          alt="Hande"
+          width={80}
+          height={80}
+          className="mx-auto"
+          priority
+        />
+      </div>
+
+      {/* Title */}
+      <div className="text-center mb-4">
+        <h1 className="text-xl font-semibold text-black mb-1">
+          Become a Driver
+        </h1>
+        <p className="text-gray-400 text-sm">
+          No commission. Just <span className="text-accent font-bold">$1</span>/day
         </p>
       </div>
 
-      {/* Progress Indicator */}
-      <div className="flex items-center gap-2 mb-6">
-        {[1, 2].map((s) => (
-          <div
-            key={s}
-            className={`w-8 h-2 rounded-full transition-colors ${
-              s <= step ? 'bg-primary' : 'bg-gray-200'
-            }`}
-          />
-        ))}
+      {/* Progress */}
+      <div className="flex items-center justify-center gap-2 mb-6">
+        <div className={`w-16 h-1.5 rounded-full ${step >= 1 ? 'bg-primary' : 'bg-gray-200'}`} />
+        <div className={`w-16 h-1.5 rounded-full ${step >= 2 ? 'bg-primary' : 'bg-gray-200'}`} />
       </div>
 
-      {/* Register Form */}
-      <Card variant="elevated" className="w-full max-w-md">
-        <form onSubmit={handleSubmit}>
-          {/* Step 1: Personal Info */}
-          {step === 1 && (
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-dark mb-4">Personal Information</h2>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <Input
-                  label="First Name"
-                  name="firstName"
-                  placeholder="First name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  icon={<User size={20} />}
-                  required
-                />
-                <Input
-                  label="Last Name"
-                  name="lastName"
-                  placeholder="Last name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <Input
-                label="Email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
-                icon={<Mail size={20} />}
-                required
-              />
-
-              <Input
-                label="Phone Number"
-                name="phone"
-                type="tel"
-                placeholder="+263 7X XXX XXXX"
-                value={formData.phone}
-                onChange={handleChange}
-                icon={<Phone size={20} />}
-                required
-              />
-
-              <div className="relative">
-                <Input
-                  label="Password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  icon={<Lock size={20} />}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Vehicle Info */}
-          {step === 2 && (
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold text-dark mb-4">Vehicle Information</h2>
-              
-              <div>
-                <label className="block text-sm font-medium text-dark mb-1.5">
-                  Vehicle Type
-                </label>
-                <select
-                  name="vehicleType"
-                  value={formData.vehicleType}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-dark focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  {VEHICLE_TYPES.map((type) => (
-                    <option key={type} value={type}>
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <Input
-                  label="Make"
-                  name="vehicleMake"
-                  placeholder="Toyota"
-                  value={formData.vehicleMake}
-                  onChange={handleChange}
-                  required
-                />
-                <Input
-                  label="Model"
-                  name="vehicleModel"
-                  placeholder="Corolla"
-                  value={formData.vehicleModel}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <Input
-                  label="Year"
-                  name="vehicleYear"
-                  type="number"
-                  placeholder="2020"
-                  value={formData.vehicleYear}
-                  onChange={handleChange}
-                  required
-                />
-                <Input
-                  label="Color"
-                  name="vehicleColor"
-                  placeholder="White"
-                  value={formData.vehicleColor}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <Input
-                label="Plate Number"
-                name="vehiclePlate"
-                placeholder="ABC 1234"
-                value={formData.vehiclePlate}
-                onChange={handleChange}
-                icon={<Car size={20} />}
-                required
-              />
-
-              <Input
-                label="License Number"
-                name="licenseNumber"
-                placeholder="Enter your driver's license number"
-                value={formData.licenseNumber}
-                onChange={handleChange}
-                icon={<CreditCard size={20} />}
-                required
-              />
-            </div>
-          )}
-
-          {error && (
-            <p className="text-danger text-sm text-center mt-4">{error}</p>
-          )}
-
-          {/* Navigation Buttons */}
-          <div className="flex gap-3 mt-6">
-            {step > 1 && (
-              <Button type="button" variant="outline" onClick={handleBack} className="flex-1">
-                <ChevronLeft size={20} className="mr-1" />
-                Back
-              </Button>
-            )}
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="flex-1">
+        {/* Step 1: Personal Info */}
+        {step === 1 && (
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-gray-500 mb-2">Step 1: Personal Info</p>
             
-            {step < 2 ? (
-              <Button type="button" onClick={handleNext} className="flex-1">
-                Next
-                <ChevronRight size={20} className="ml-1" />
-              </Button>
-            ) : (
-              <Button type="submit" isLoading={isLoading} className="flex-1">
-                Complete Registration
-              </Button>
-            )}
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="text"
+                name="firstName"
+                placeholder="First name"
+                value={formData.firstName}
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                required
+              />
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last name"
+                value={formData.lastName}
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                required
+              />
+            </div>
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Email address"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              required
+            />
+
+            <input
+              type="tel"
+              name="phone"
+              placeholder="Phone number"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              required
+            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                name="password"
+                placeholder="Password"
+                value={formData.password}
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 pr-12 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+            <button
+              type="button"
+              onClick={handleNext}
+              className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all mt-4"
+            >
+              Continue
+            </button>
           </div>
-        </form>
+        )}
 
-        <div className="mt-6 text-center">
-          <p className="text-gray-500">
-            Already have an account?{' '}
-            <Link href="/login" className="text-primary font-medium hover:underline">
-              Sign In
-            </Link>
-          </p>
-        </div>
-      </Card>
+        {/* Step 2: Vehicle Info */}
+        {step === 2 && (
+          <div className="space-y-3">
+            <p className="text-sm font-medium text-gray-500 mb-2">Step 2: Vehicle Info</p>
+            
+            <select
+              name="vehicleType"
+              value={formData.vehicleType}
+              onChange={handleChange}
+              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+            >
+              {VEHICLE_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </option>
+              ))}
+            </select>
 
-      {/* $1/day highlight */}
-      <div className="mt-6 bg-accent/10 rounded-xl p-4 w-full max-w-md text-center">
-        <p className="text-dark">
-          <span className="font-bold price-highlight text-lg">$1/day</span> subscription fee
-        </p>
-        <p className="text-sm text-gray-500 mt-1">
-          No commissions. Keep 100% of your fares.
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="text"
+                name="vehicleMake"
+                placeholder="Make (Toyota)"
+                value={formData.vehicleMake}
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                required
+              />
+              <input
+                type="text"
+                name="vehicleModel"
+                placeholder="Model (Corolla)"
+                value={formData.vehicleModel}
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="number"
+                name="vehicleYear"
+                placeholder="Year"
+                value={formData.vehicleYear}
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                required
+              />
+              <input
+                type="text"
+                name="vehicleColor"
+                placeholder="Color"
+                value={formData.vehicleColor}
+                onChange={handleChange}
+                className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+                required
+              />
+            </div>
+
+            <input
+              type="text"
+              name="vehiclePlate"
+              placeholder="Plate number"
+              value={formData.vehiclePlate}
+              onChange={handleChange}
+              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              required
+            />
+
+            <input
+              type="text"
+              name="licenseNumber"
+              placeholder="Driver's license number"
+              value={formData.licenseNumber}
+              onChange={handleChange}
+              className="w-full px-4 py-3.5 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+              required
+            />
+
+            {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+            <div className="flex gap-3 mt-4">
+              <button
+                type="button"
+                onClick={handleBack}
+                className="flex-1 py-4 bg-gray-100 text-black font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+              >
+                <ChevronLeft size={20} />
+                Back
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-50"
+              >
+                {isLoading ? 'Registering...' : 'Complete'}
+              </button>
+            </div>
+          </div>
+        )}
+      </form>
+
+      {/* Bottom */}
+      <div className="py-6">
+        <p className="text-center text-gray-500">
+          Already have an account?{' '}
+          <Link href="/login" className="text-primary font-semibold">
+            Sign In
+          </Link>
         </p>
       </div>
     </div>
