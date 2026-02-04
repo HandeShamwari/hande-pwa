@@ -2,13 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
+import Image from 'next/image';
 import {
   X,
   User,
   Clock,
   Wallet,
   MapPin,
-  Star,
   Settings,
   HelpCircle,
   LogOut,
@@ -16,13 +16,12 @@ import {
   DollarSign,
   BarChart3,
   FileText,
-  AlertCircle,
   Users,
+  ChevronRight,
 } from 'lucide-react';
 import type { RootState } from '@/store';
 import { logout, setUserType } from '@/store/slices/authSlice';
 import { clearAuthToken } from '@/lib/api';
-import { Button } from '@/components/ui/button';
 
 interface DrawerMenuProps {
   isOpen: boolean;
@@ -88,102 +87,94 @@ export function DrawerMenu({ isOpen, onClose, userType }: DrawerMenuProps) {
       />
 
       {/* Drawer */}
-      <div className="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white z-50 animate-slide-up shadow-2xl safe-area-top safe-area-bottom flex flex-col">
+      <div className="fixed inset-y-0 left-0 w-80 max-w-[85vw] bg-white z-50 shadow-2xl safe-area-top safe-area-bottom flex flex-col">
         {/* Header */}
-        <div className="p-6 bg-primary">
+        <div className="px-6 pt-14 pb-6">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-white/80 hover:text-white"
+            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-black transition-colors"
           >
             <X size={24} />
           </button>
 
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <Image
+              src="/logo.png"
+              alt="Hande"
+              width={60}
+              height={60}
+              priority
+            />
+          </div>
+
+          {/* User Info */}
+          <div className="flex items-center gap-4 p-4 bg-gray-100 rounded-xl">
+            <div className="w-14 h-14 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden">
               {user?.profileImage ? (
-                <img src={user.profileImage} alt={user.firstName} className="w-full h-full rounded-full object-cover" />
+                <img src={user.profileImage} alt={user.firstName} className="w-full h-full object-cover" />
               ) : (
-                <span className="text-white text-2xl font-bold">
+                <span className="text-gray-500 text-xl font-semibold">
                   {user?.firstName?.charAt(0).toUpperCase() || 'U'}
                 </span>
               )}
             </div>
             <div className="flex-1">
-              <h2 className="text-white font-semibold text-lg">{user?.firstName} {user?.lastName}</h2>
-              <div className="flex items-center gap-1 text-white/80">
-                <Star size={14} fill="currentColor" />
-                <span className="text-sm">
-                  {userType === 'rider' 
-                    ? rider?.rating?.toFixed(1) || '5.0' 
-                    : driver?.rating?.toFixed(1) || '5.0'}
-                </span>
-              </div>
+              <h2 className="text-black font-semibold">{user?.firstName} {user?.lastName}</h2>
+              <p className="text-gray-400 text-sm capitalize">{userType}</p>
             </div>
-          </div>
-
-          {/* Role indicator */}
-          <div className="mt-4 flex items-center gap-2">
-            <span className="px-3 py-1 bg-white/20 rounded-full text-white text-sm capitalize">
-              {userType}
-            </span>
             {driver?.isSubscribed && userType === 'driver' && (
-              <span className="px-3 py-1 bg-accent/20 rounded-full text-accent text-sm">
-                Subscribed
+              <span className="px-2 py-1 bg-primary/10 rounded-full text-primary text-xs font-medium">
+                Active
               </span>
             )}
           </div>
         </div>
 
         {/* Menu Items */}
-        <nav className="flex-1 overflow-y-auto py-4">
+        <nav className="flex-1 overflow-y-auto px-4">
           {menuItems.map((item) => (
             <button
               key={item.path}
               onClick={() => navigateTo(item.path)}
-              className="w-full flex items-center gap-4 px-6 py-3 hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center gap-4 px-4 py-4 hover:bg-gray-100 rounded-xl transition-colors mb-1"
             >
-              <item.icon size={22} className="text-gray-500" />
-              <span className="text-dark">{item.label}</span>
+              <item.icon size={22} className="text-gray-400" />
+              <span className="text-black flex-1 text-left">{item.label}</span>
+              <ChevronRight size={18} className="text-gray-300" />
             </button>
           ))}
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-100">
-          {/* Switch Role - show if user has both rider and driver profiles */}
+        <div className="p-6 space-y-3">
+          {/* Switch Role */}
           {rider && driver && (
-            <Button
-              variant="outline"
-              fullWidth
+            <button
               onClick={handleSwitchRole}
-              className="mb-3"
+              className="w-full py-4 bg-gray-100 text-black font-semibold rounded-xl hover:bg-gray-200 active:scale-[0.98] transition-all"
             >
-              <Car size={18} className="mr-2" />
               Switch to {userType === 'rider' ? 'Driver' : 'Rider'}
-            </Button>
+            </button>
           )}
 
-          {/* Become a Driver (for riders without driver profile) */}
+          {/* Become a Driver */}
           {userType === 'rider' && !driver && (
             <button
               onClick={() => navigateTo('/register/driver')}
-              className="w-full flex items-center justify-center gap-2 p-3 mb-3 bg-accent/10 rounded-xl text-accent font-medium"
+              className="w-full py-4 bg-black text-white font-semibold rounded-xl hover:bg-black/90 active:scale-[0.98] transition-all"
             >
-              <Car size={18} />
-              <span>Become a Driver - <span className="font-bold">$1</span>/day</span>
+              Become a Driver — <span className="text-accent">$1</span>/day
             </button>
           )}
 
           {/* Logout */}
-          <Button
-            variant="ghost"
-            fullWidth
+          <button
             onClick={handleLogout}
-            className="text-danger hover:bg-danger/10"
+            className="w-full py-4 text-red-500 font-semibold rounded-xl hover:bg-red-50 active:scale-[0.98] transition-all"
           >
-            <LogOut size={18} className="mr-2" />
             Logout
-          </Button>
+          </button>
         </div>
       </div>
     </>
