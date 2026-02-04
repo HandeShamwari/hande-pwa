@@ -15,10 +15,12 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   other: {
     'mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-capable': 'yes',
+    'format-detection': 'telephone=no',
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'Hande',
   },
   icons: {
@@ -35,7 +37,9 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
+  minimumScale: 1,
   userScalable: false,
+  viewportFit: 'cover',
   themeColor: '#7ED957',
 };
 
@@ -51,7 +55,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://maps.googleapis.com" />
       </head>
       <body className={roboto.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <main className="mobile-container">
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );

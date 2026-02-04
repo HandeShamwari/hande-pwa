@@ -14,6 +14,7 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
@@ -21,11 +22,40 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   font-family: 'Roboto', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Mobile-first design */
+/* MOBILE-ONLY: Constrain to mobile viewport */
 body {
+  background-color: #000;
+}
+
+#__next,
+main {
+  max-width: 430px; /* iPhone 14 Pro Max width */
+  margin: 0 auto;
+  min-height: 100dvh;
   background-color: #F5F5F5;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Desktop preview frame */
+@media (min-width: 431px) {
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 0;
+  }
+  
+  #__next,
+  main {
+    box-shadow: 0 0 60px rgba(0, 0, 0, 0.3);
+    border-radius: 0;
+  }
 }
 
 /* PWA - Safe area insets for notched devices */
@@ -36,6 +66,26 @@ body {
   .safe-area-bottom {
     padding-bottom: max(env(safe-area-inset-bottom), 0px);
   }
+  .safe-area-left {
+    padding-left: max(env(safe-area-inset-left), 0px);
+  }
+  .safe-area-right {
+    padding-right: max(env(safe-area-inset-right), 0px);
+  }
+}
+
+/* Touch-friendly defaults */
+button, a, input, select, textarea {
+  touch-action: manipulation;
+}
+
+input, textarea, select {
+  font-size: 16px !important; /* Prevents iOS zoom on focus */
+}
+
+/* Prevent pull-to-refresh on mobile */
+html {
+  overscroll-behavior: none;
 }
 
 /* Hide scrollbar but allow scrolling */
@@ -89,4 +139,22 @@ body {
 .price-highlight {
   color: var(--accent);
   font-weight: 700;
+}
+
+/* Mobile touch states */
+.touch-active:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+/* Mobile container - for PWA/APK */
+.mobile-container {
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  background-color: #F5F5F5;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
