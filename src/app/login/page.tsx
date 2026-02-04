@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Car } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -52,9 +53,13 @@ export default function LoginPage() {
       {/* Top Section - Brand */}
       <div className="flex-1 flex flex-col justify-end pb-8 px-6">
         <div className="space-y-2">
-          <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary/30">
-            <span className="text-white text-xl font-bold">H</span>
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Hande"
+            width={56}
+            height={56}
+            className="mb-6"
+          />
           <h1 className="text-4xl font-bold text-dark tracking-tight">
             Welcome<br />back
           </h1>
@@ -185,7 +190,7 @@ export default function LoginPage() {
             <div>
               <p className="text-dark font-semibold text-sm">Become a Driver</p>
               <p className="text-gray-500 text-xs">
-                Earn with just <span className="text-accent font-bold">$1</span>/day
+                No commission. Just <span className="text-accent font-bold">$1</span>/day
               </p>
             </div>
           </div>
