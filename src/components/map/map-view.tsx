@@ -1,8 +1,39 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
+import { useCallback, useState, useRef, useEffect } from 'react';
+import {
+  GoogleMap,
+  Marker,
+  DirectionsRenderer,
+} from '@react-google-maps/api';
+import { useMapContext } from './map-provider';
 import type { Location } from '@/store/slices/tripSlice';
+
+// Map container style
+const containerStyle = {
+  width: '100%',
+  height: '100%',
+};
+
+// Map styling - clean, minimal look
+const mapStyles = [
+  { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+  { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+];
+
+// Default center (Harare, Zimbabwe)
+const defaultCenter = {
+  lat: -17.8292,
+  lng: 31.0522,
+};
+
+// Map options
+const mapOptions: google.maps.MapOptions = {
+  disableDefaultUI: true,
+  zoomControl: true,
+  styles: mapStyles,
+  clickableIcons: false,
+};
 
 interface MapViewProps {
   center: Location;
@@ -14,6 +45,29 @@ interface MapViewProps {
   onMapClick?: (location: Location) => void;
 }
 
+// Pickup marker icon (green circle)
+const pickupIcon = {
+  path: 0, // google.maps.SymbolPath.CIRCLE
+  scale: 10,
+  fillColor: '#7ED957',
+  fillOpacity: 1,
+  strokeColor: '#ffffff',
+  strokeWeight: 3,
+};
+
+// Dropoff marker icon (gold arrow)
+const dropoffIcon = {
+  path: 4, // google.maps.SymbolPath.BACKWARD_CLOSED_ARROW
+  scale: 6,
+  fillColor: '#FFB800',
+  fillOpacity: 1,
+  strokeColor: '#ffffff',
+  strokeWeight: 2,
+};
+
+// Car icon for drivers
+const carIconUrl = '/icons/car-marker.svg';
+
 export function MapView({
   center,
   pickupLocation,
@@ -23,178 +77,159 @@ export function MapView({
   showRoute = false,
   onMapClick,
 }: MapViewProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
-  const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const { isLoaded, loadError } = useMapContext();
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const [directions, setDirections] = useState<google.maps.DirectionsResult | null>(null);
 
-  // Initialize map
-  useEffect(() => {
-    const loader = new Loader({
-      apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
-      version: 'weekly',
-      libraries: ['places', 'geometry'],
-    });
-
-    loader.load().then(() => {
-      if (mapRef.current && !mapInstance.current) {
-        mapInstance.current = new google.maps.Map(mapRef.current, {
-          center: { lat: center.latitude, lng: center.longitude },
-          zoom: 15,
-          disableDefaultUI: true,
-          zoomControl: true,
-          styles: [
-            { featureType: 'poi', stylers: [{ visibility: 'off' }] },
-            { featureType: 'transit', stylers: [{ visibility: 'off' }] },
-          ],
-        });
-
-        directionsRenderer.current = new google.maps.DirectionsRenderer({
-          map: mapInstance.current,
-          suppressMarkers: true,
-          polylineOptions: {
-            strokeColor: '#7ED957',
-            strokeWeight: 5,
-          },
-        });
-
-        if (onMapClick) {
-          mapInstance.current.addListener('click', (e: google.maps.MapMouseEvent) => {
-            if (e.latLng) {
-              onMapClick({
-                latitude: e.latLng.lat(),
-                longitude: e.latLng.lng(),
-              });
-            }
-          });
-        }
-
-        setIsLoaded(true);
-      }
-    });
-
-    return () => {
-      markersRef.current.forEach(m => m.setMap(null));
-      markersRef.current = [];
-    };
+  // Store map reference
+  const onLoad = useCallback((map: google.maps.Map) => {
+    mapRef.current = map;
   }, []);
 
-  // Update markers
+  const onUnmount = useCallback(() => {
+    mapRef.current = null;
+  }, []);
+
+  // Handle map click
+  const handleMapClick = useCallback((e: google.maps.MapMouseEvent) => {
+    if (onMapClick && e.latLng) {
+      onMapClick({
+        latitude: e.latLng.lat(),
+        longitude: e.latLng.lng(),
+      });
+    }
+  }, [onMapClick]);
+
+  // Calculate and display route when pickup and dropoff are set
   useEffect(() => {
-    if (!mapInstance.current || !isLoaded) return;
-
-    // Clear existing markers
-    markersRef.current.forEach(m => m.setMap(null));
-    markersRef.current = [];
-
-    // Pickup marker (green)
-    if (pickupLocation) {
-      const marker = new google.maps.Marker({
-        position: { lat: pickupLocation.latitude, lng: pickupLocation.longitude },
-        map: mapInstance.current,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 10,
-          fillColor: '#7ED957',
-          fillOpacity: 1,
-          strokeColor: '#fff',
-          strokeWeight: 3,
-        },
-        title: 'Pickup',
-      });
-      markersRef.current.push(marker);
+    if (!isLoaded || !showRoute || !pickupLocation || !dropoffLocation) {
+      setDirections(null);
+      return;
     }
 
-    // Dropoff marker (gold)
-    if (dropoffLocation) {
-      const marker = new google.maps.Marker({
-        position: { lat: dropoffLocation.latitude, lng: dropoffLocation.longitude },
-        map: mapInstance.current,
-        icon: {
-          path: google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,
-          scale: 6,
-          fillColor: '#FFB800',
-          fillOpacity: 1,
-          strokeColor: '#fff',
-          strokeWeight: 2,
-        },
-        title: 'Dropoff',
-      });
-      markersRef.current.push(marker);
-    }
-
-    // Driver marker (car icon)
-    if (driverLocation) {
-      const marker = new google.maps.Marker({
-        position: { lat: driverLocation.latitude, lng: driverLocation.longitude },
-        map: mapInstance.current,
-        icon: {
-          url: '/icons/car-marker.svg',
-          scaledSize: new google.maps.Size(40, 40),
-          anchor: new google.maps.Point(20, 20),
-        },
-        title: 'Driver',
-      });
-      markersRef.current.push(marker);
-    }
-
-    // Nearby drivers
-    nearbyDrivers.forEach((driver, i) => {
-      const marker = new google.maps.Marker({
-        position: { lat: driver.latitude, lng: driver.longitude },
-        map: mapInstance.current,
-        icon: {
-          url: '/icons/car-marker.svg',
-          scaledSize: new google.maps.Size(32, 32),
-          anchor: new google.maps.Point(16, 16),
-        },
-        title: `Driver ${i + 1}`,
-      });
-      markersRef.current.push(marker);
-    });
-
-  }, [pickupLocation, dropoffLocation, driverLocation, nearbyDrivers, isLoaded]);
-
-  // Draw route
-  useEffect(() => {
-    if (!mapInstance.current || !directionsRenderer.current || !isLoaded) return;
-
-    if (showRoute && pickupLocation && dropoffLocation) {
-      const directionsService = new google.maps.DirectionsService();
-      directionsService.route(
-        {
-          origin: { lat: pickupLocation.latitude, lng: pickupLocation.longitude },
-          destination: { lat: dropoffLocation.latitude, lng: dropoffLocation.longitude },
-          travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (result, status) => {
-          if (status === 'OK' && result) {
-            directionsRenderer.current?.setDirections(result);
-          }
+    const directionsService = new google.maps.DirectionsService();
+    
+    directionsService.route(
+      {
+        origin: { lat: pickupLocation.latitude, lng: pickupLocation.longitude },
+        destination: { lat: dropoffLocation.latitude, lng: dropoffLocation.longitude },
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (result, status) => {
+        if (status === 'OK' && result) {
+          setDirections(result);
+        } else {
+          console.error('Directions request failed:', status);
+          setDirections(null);
         }
-      );
-    } else if (directionsRenderer.current) {
-      // Clear directions by setting map to null and back
-      directionsRenderer.current.setMap(null);
-      directionsRenderer.current.setMap(mapInstance.current);
-    }
-  }, [pickupLocation, dropoffLocation, showRoute, isLoaded]);
+      }
+    );
+  }, [isLoaded, showRoute, pickupLocation, dropoffLocation]);
 
   // Pan to center when it changes
   useEffect(() => {
-    if (mapInstance.current && center) {
-      mapInstance.current.panTo({ lat: center.latitude, lng: center.longitude });
+    if (mapRef.current && center) {
+      mapRef.current.panTo({ lat: center.latitude, lng: center.longitude });
     }
   }, [center]);
 
-  return (
-    <div ref={mapRef} className="w-full h-full bg-gray-100">
-      {!isLoaded && (
-        <div className="w-full h-full flex items-center justify-center">
-          <div className="animate-pulse text-gray-400">Loading map...</div>
+  // Loading state
+  if (!isLoaded) {
+    return (
+      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+          <p className="text-gray-500 text-sm">Loading map...</p>
         </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (loadError) {
+    return (
+      <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+        <div className="text-center p-4">
+          <p className="text-danger font-medium">Failed to load map</p>
+          <p className="text-gray-500 text-sm mt-1">Please check your internet connection</p>
+        </div>
+      </div>
+    );
+  }
+
+  const mapCenter = center 
+    ? { lat: center.latitude, lng: center.longitude }
+    : defaultCenter;
+
+  return (
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={mapCenter}
+      zoom={15}
+      onLoad={onLoad}
+      onUnmount={onUnmount}
+      onClick={handleMapClick}
+      options={mapOptions}
+    >
+      {/* Pickup Marker */}
+      {pickupLocation && (
+        <Marker
+          position={{ lat: pickupLocation.latitude, lng: pickupLocation.longitude }}
+          icon={pickupIcon}
+          title="Pickup"
+        />
       )}
-    </div>
+
+      {/* Dropoff Marker */}
+      {dropoffLocation && (
+        <Marker
+          position={{ lat: dropoffLocation.latitude, lng: dropoffLocation.longitude }}
+          icon={dropoffIcon}
+          title="Dropoff"
+        />
+      )}
+
+      {/* Driver Marker */}
+      {driverLocation && (
+        <Marker
+          position={{ lat: driverLocation.latitude, lng: driverLocation.longitude }}
+          icon={{
+            url: carIconUrl,
+            scaledSize: new google.maps.Size(40, 40),
+            anchor: new google.maps.Point(20, 20),
+          }}
+          title="Driver"
+        />
+      )}
+
+      {/* Nearby Drivers */}
+      {nearbyDrivers.map((driver, index) => (
+        <Marker
+          key={`driver-${index}`}
+          position={{ lat: driver.latitude, lng: driver.longitude }}
+          icon={{
+            url: carIconUrl,
+            scaledSize: new google.maps.Size(32, 32),
+            anchor: new google.maps.Point(16, 16),
+          }}
+          title={`Driver ${index + 1}`}
+        />
+      ))}
+
+      {/* Route */}
+      {directions && (
+        <DirectionsRenderer
+          directions={directions}
+          options={{
+            suppressMarkers: true,
+            polylineOptions: {
+              strokeColor: '#7ED957',
+              strokeWeight: 5,
+              strokeOpacity: 0.8,
+            },
+          }}
+        />
+      )}
+    </GoogleMap>
   );
 }
