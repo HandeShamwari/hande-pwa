@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useDispatch } from 'react-redux';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, Car } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Eye, EyeOff } from 'lucide-react';
 import { GoogleSignInButton } from '@/components/auth/google-sign-in-button';
 import { setCredentials } from '@/store/slices/authSlice';
 import authApi from '@/api/auth';
@@ -20,7 +19,6 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,129 +47,98 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col safe-area-top safe-area-bottom">
-      {/* Top Section - Brand */}
-      <div className="flex-1 flex flex-col justify-end pb-8 px-6">
-        <div className="space-y-2">
-          <Image
-            src="/logo.png"
-            alt="Hande"
-            width={56}
-            height={56}
-            className="mb-6"
-          />
-          <h1 className="text-4xl font-bold text-dark tracking-tight">
-            Welcome<br />back
-          </h1>
-          <p className="text-gray-400 text-lg">
-            Sign in to continue
-          </p>
-        </div>
+    <div className="min-h-screen bg-white flex flex-col px-6 safe-area-top safe-area-bottom">
+      {/* Header with Logo */}
+      <div className="pt-12 pb-8">
+        <Image
+          src="/logo.png"
+          alt="Hande"
+          width={80}
+          height={80}
+          className="mx-auto"
+          priority
+        />
       </div>
 
-      {/* Bottom Section - Form */}
-      <div className="flex-[2] bg-gray-50 rounded-t-[32px] px-6 pt-8 pb-6">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-500 ml-1">Email</label>
-            <div 
-              className={`relative bg-white rounded-2xl border-2 transition-all duration-200 ${
-                focusedField === 'email' 
-                  ? 'border-primary shadow-lg shadow-primary/10' 
-                  : 'border-transparent'
-              }`}
-            >
-              <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                <Mail size={20} className={focusedField === 'email' ? 'text-primary' : 'text-gray-300'} />
-              </div>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onFocus={() => setFocusedField('email')}
-                onBlur={() => setFocusedField(null)}
-                className="w-full pl-12 pr-4 py-4 bg-transparent text-dark placeholder:text-gray-300 focus:outline-none text-base"
-                required
-              />
-            </div>
-          </div>
+      {/* Welcome Text */}
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-bold text-black mb-2">
+          Welcome Back
+        </h1>
+        <p className="text-gray-500">
+          Sign in to your account
+        </p>
+      </div>
 
-          {/* Password Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-500 ml-1">Password</label>
-            <div 
-              className={`relative bg-white rounded-2xl border-2 transition-all duration-200 ${
-                focusedField === 'password' 
-                  ? 'border-primary shadow-lg shadow-primary/10' 
-                  : 'border-transparent'
-              }`}
-            >
-              <div className="absolute left-4 top-1/2 -translate-y-1/2">
-                <Lock size={20} className={focusedField === 'password' ? 'text-primary' : 'text-gray-300'} />
-              </div>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onFocus={() => setFocusedField('password')}
-                onBlur={() => setFocusedField(null)}
-                className="w-full pl-12 pr-12 py-4 bg-transparent text-dark placeholder:text-gray-300 focus:outline-none text-base"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-500 transition-colors"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-          </div>
-
-          {/* Forgot Password */}
-          <div className="flex justify-end">
-            <button type="button" className="text-sm text-primary font-medium">
-              Forgot password?
-            </button>
-          </div>
-
-          {/* Error */}
-          {error && (
-            <div className="bg-danger/10 text-danger text-sm text-center py-3 px-4 rounded-xl">
-              {error}
-            </div>
-          )}
-
-          {/* Sign In Button */}
-          <Button 
-            type="submit" 
-            fullWidth 
-            isLoading={isLoading}
-            className="!py-4 !rounded-2xl !text-base font-semibold shadow-lg shadow-primary/30 !mt-6"
-          >
-            Sign In
-            <ArrowRight size={20} className="ml-2" />
-          </Button>
-        </form>
-
-        {/* Divider */}
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
-          </div>
-          <div className="relative flex justify-center">
-            <span className="px-4 bg-gray-50 text-gray-400 text-sm">or</span>
-          </div>
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-4 flex-1">
+        {/* Email */}
+        <div>
+          <input
+            type="email"
+            placeholder="Email address"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+            required
+          />
         </div>
 
-        {/* Google Sign In */}
-        <GoogleSignInButton mode="signin" />
+        {/* Password */}
+        <div className="relative">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-4 pr-12 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:bg-white transition-all"
+            required
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+        </div>
 
-        {/* Sign Up Link */}
-        <p className="text-center mt-6 text-gray-500">
+        {/* Forgot Password */}
+        <div className="text-right">
+          <button type="button" className="text-sm text-primary font-medium">
+            Forgot password?
+          </button>
+        </div>
+
+        {/* Error */}
+        {error && (
+          <p className="text-red-500 text-sm text-center">{error}</p>
+        )}
+
+        {/* Sign In Button */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full py-4 bg-primary text-white font-semibold rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all disabled:opacity-50"
+        >
+          {isLoading ? 'Signing in...' : 'Sign In'}
+        </button>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 my-6">
+          <div className="flex-1 h-px bg-gray-200" />
+          <span className="text-gray-400 text-sm">or</span>
+          <div className="flex-1 h-px bg-gray-200" />
+        </div>
+
+        {/* Google */}
+        <GoogleSignInButton mode="signin" />
+      </form>
+
+      {/* Bottom Section */}
+      <div className="py-8 space-y-4">
+        {/* Sign Up */}
+        <p className="text-center text-gray-500">
           Don&apos;t have an account?{' '}
           <Link href="/register" className="text-primary font-semibold">
             Sign Up
@@ -181,27 +148,14 @@ export default function LoginPage() {
         {/* Driver CTA */}
         <Link 
           href="/register/driver" 
-          className="mt-6 flex items-center justify-between bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-4 group hover:from-primary/20 hover:to-accent/20 transition-all"
+          className="block text-center py-4 bg-black text-white font-semibold rounded-xl"
         >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
-              <Car size={20} className="text-primary" />
-            </div>
-            <div>
-              <p className="text-dark font-semibold text-sm">Become a Driver</p>
-              <p className="text-gray-500 text-xs">
-                No commission. Just <span className="text-accent font-bold">$1</span>/day
-              </p>
-            </div>
-          </div>
-          <ArrowRight size={20} className="text-primary group-hover:translate-x-1 transition-transform" />
+          Become a Driver — <span className="text-accent">$1</span>/day
         </Link>
 
-        {/* Footer */}
-        <p className="text-center text-xs text-gray-400 mt-6">
-          By continuing, you agree to our{' '}
-          <span className="text-gray-500">Terms</span> &{' '}
-          <span className="text-gray-500">Privacy Policy</span>
+        {/* Terms */}
+        <p className="text-center text-xs text-gray-400">
+          By continuing, you agree to our Terms & Privacy Policy
         </p>
       </div>
     </div>
