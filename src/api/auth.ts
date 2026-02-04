@@ -24,6 +24,14 @@ export interface DriverRegisterData extends RegisterData {
   vehicleColor?: string;
 }
 
+export interface GoogleAuthData {
+  email: string;
+  googleId: string;
+  firstName?: string;
+  lastName?: string;
+  profileImage?: string;
+}
+
 export interface AuthResponse {
   user: {
     id: string;
@@ -72,6 +80,12 @@ export const authApi = {
   registerDriver: async (data: DriverRegisterData): Promise<AuthResponse> => {
     const response = await api.post('/auth/register/driver', data);
     setAuthToken(response.data.token);
+    return response.data;
+  },
+
+  googleAuth: async (data: GoogleAuthData): Promise<{ user: AuthResponse['user']; accessToken: string }> => {
+    const response = await api.post('/auth/google', data);
+    setAuthToken(response.data.accessToken);
     return response.data;
   },
 

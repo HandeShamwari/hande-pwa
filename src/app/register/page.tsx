@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { useSession } from 'next-auth/react';
 import { Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +15,6 @@ import authApi from '@/api/auth';
 export default function RegisterPage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { data: session, status } = useSession();
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -29,19 +27,6 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Handle NextAuth session (Google sign-in)
-  useEffect(() => {
-    if (status === 'authenticated' && session?.accessToken) {
-      dispatch(setCredentials({
-        user: session.user as any,
-        token: session.accessToken,
-        rider: undefined,
-        driver: undefined,
-      }));
-      router.push('/rider');
-    }
-  }, [session, status, dispatch, router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -97,7 +82,7 @@ export default function RegisterPage() {
       {/* Register Form */}
       <Card variant="elevated" className="w-full max-w-md">
         {/* Google Sign Up */}
-        <GoogleSignInButton mode="signup" userType="rider" />
+        <GoogleSignInButton mode="signup" />
 
         {/* Divider */}
         <div className="relative my-6">

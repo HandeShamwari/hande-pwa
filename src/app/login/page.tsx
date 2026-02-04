@@ -1,10 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
-import { useSession } from 'next-auth/react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,31 +15,12 @@ import authApi from '@/api/auth';
 export default function LoginPage() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const { data: session, status } = useSession();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Handle NextAuth session (Google sign-in)
-  useEffect(() => {
-    if (status === 'authenticated' && session?.accessToken) {
-      dispatch(setCredentials({
-        user: session.user as any,
-        token: session.accessToken,
-        rider: undefined,
-        driver: undefined,
-      }));
-      
-      if (session.userType === 'driver') {
-        router.push('/driver');
-      } else {
-        router.push('/rider');
-      }
-    }
-  }, [session, status, dispatch, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
