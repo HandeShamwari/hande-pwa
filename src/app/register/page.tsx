@@ -16,7 +16,8 @@ export default function RegisterPage() {
   const dispatch = useDispatch();
   
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     password: '',
@@ -43,11 +44,12 @@ export default function RegisterPage() {
 
     try {
       const response = await authApi.register({
-        name: formData.name,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
-        role: 'rider',
+        userType: 'rider',
       });
 
       dispatch(setCredentials({
@@ -80,10 +82,20 @@ export default function RegisterPage() {
       <Card variant="elevated" className="w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Full Name"
-            name="name"
-            placeholder="Enter your full name"
-            value={formData.name}
+            label="First Name"
+            name="firstName"
+            placeholder="Enter your first name"
+            value={formData.firstName}
+            onChange={handleChange}
+            icon={<User size={20} />}
+            required
+          />
+
+          <Input
+            label="Last Name"
+            name="lastName"
+            placeholder="Enter your last name"
+            value={formData.lastName}
             onChange={handleChange}
             icon={<User size={20} />}
             required

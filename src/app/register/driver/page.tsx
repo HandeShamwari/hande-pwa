@@ -24,7 +24,8 @@ export default function DriverRegisterPage() {
   
   const [formData, setFormData] = useState({
     // Personal
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     password: '',
@@ -44,7 +45,7 @@ export default function DriverRegisterPage() {
 
   const handleNext = () => {
     if (step === 1) {
-      if (!formData.name || !formData.email || !formData.password) {
+      if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
         setError('Please fill in all required fields');
         return;
       }
@@ -65,11 +66,12 @@ export default function DriverRegisterPage() {
 
     try {
       const response = await authApi.registerDriver({
-        name: formData.name,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
         password: formData.password,
-        role: 'driver',
+        userType: 'driver',
         vehicleType: formData.vehicleType,
         vehicleMake: formData.vehicleMake,
         vehicleModel: formData.vehicleModel,
@@ -128,15 +130,25 @@ export default function DriverRegisterPage() {
             <div className="space-y-4">
               <h2 className="text-lg font-semibold text-dark mb-4">Personal Information</h2>
               
-              <Input
-                label="Full Name"
-                name="name"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={handleChange}
-                icon={<User size={20} />}
-                required
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  label="First Name"
+                  name="firstName"
+                  placeholder="First name"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  icon={<User size={20} />}
+                  required
+                />
+                <Input
+                  label="Last Name"
+                  name="lastName"
+                  placeholder="Last name"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
 
               <Input
                 label="Email"

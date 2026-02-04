@@ -6,31 +6,34 @@ export interface LoginData {
 }
 
 export interface RegisterData {
-  name: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   phone?: string;
-  role?: 'rider' | 'driver';
+  userType: 'rider' | 'driver' | 'admin';
 }
 
 export interface DriverRegisterData extends RegisterData {
-  vehicleType: string;
-  vehicleMake: string;
-  vehicleModel: string;
-  vehicleYear: number;
-  vehiclePlate: string;
-  vehicleColor: string;
-  licenseNumber: string;
+  licenseNumber?: string;
+  vehicleType?: string;
+  vehicleMake?: string;
+  vehicleModel?: string;
+  vehicleYear?: number;
+  vehiclePlate?: string;
+  vehicleColor?: string;
 }
 
 export interface AuthResponse {
   user: {
     id: string;
     email: string;
-    name: string;
+    firstName: string;
+    lastName: string;
     phone?: string;
-    avatar?: string;
-    role: 'rider' | 'driver' | 'both';
+    profileImage?: string;
+    userType: 'rider' | 'driver' | 'admin';
+    activeRole?: string;
   };
   token: string;
   rider?: {

@@ -35,8 +35,8 @@ export default function LoginPage() {
         driver: response.driver,
       }));
       
-      // Redirect based on role
-      if (response.driver && response.user.role !== 'rider') {
+      // Redirect based on userType
+      if (response.user.userType === 'driver') {
         router.push('/driver');
       } else {
         router.push('/rider');

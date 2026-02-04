@@ -100,16 +100,16 @@ export function DrawerMenu({ isOpen, onClose, userType }: DrawerMenuProps) {
 
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-              {user?.avatar ? (
-                <img src={user.avatar} alt={user.name} className="w-full h-full rounded-full object-cover" />
+              {user?.profileImage ? (
+                <img src={user.profileImage} alt={user.firstName} className="w-full h-full rounded-full object-cover" />
               ) : (
                 <span className="text-white text-2xl font-bold">
-                  {user?.name?.charAt(0).toUpperCase() || 'U'}
+                  {user?.firstName?.charAt(0).toUpperCase() || 'U'}
                 </span>
               )}
             </div>
             <div className="flex-1">
-              <h2 className="text-white font-semibold text-lg">{user?.name || 'User'}</h2>
+              <h2 className="text-white font-semibold text-lg">{user?.firstName} {user?.lastName}</h2>
               <div className="flex items-center gap-1 text-white/80">
                 <Star size={14} fill="currentColor" />
                 <span className="text-sm">
@@ -150,8 +150,8 @@ export function DrawerMenu({ isOpen, onClose, userType }: DrawerMenuProps) {
 
         {/* Footer */}
         <div className="p-4 border-t border-gray-100">
-          {/* Switch Role */}
-          {(user?.role === 'both' || (user?.role === 'rider' && driver) || (user?.role === 'driver' && rider)) && (
+          {/* Switch Role - show if user has both rider and driver profiles */}
+          {rider && driver && (
             <Button
               variant="outline"
               fullWidth

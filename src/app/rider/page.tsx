@@ -171,7 +171,7 @@ export default function RiderPage() {
         {/* Idle State - Quick Actions */}
         {viewState === 'idle' && (
           <div className="p-4">
-            <h2 className="text-lg font-semibold text-dark mb-4">Good {getGreeting()}, {user?.name?.split(' ')[0]}</h2>
+            <h2 className="text-lg font-semibold text-dark mb-4">Good {getGreeting()}, {user?.firstName}</h2>
             
             {/* Quick Destinations */}
             <div className="space-y-3">

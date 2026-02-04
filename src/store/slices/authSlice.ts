@@ -3,10 +3,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export interface User {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   phone?: string;
-  avatar?: string;
-  role: 'rider' | 'driver' | 'both';
+  profileImage?: string;
+  userType: 'rider' | 'driver' | 'admin';
+  activeRole?: string;
 }
 
 export interface RiderProfile {
