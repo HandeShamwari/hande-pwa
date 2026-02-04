@@ -3,23 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { 
-  ArrowLeft, 
-  User, 
-  Mail, 
-  Phone, 
-  Camera,
-  Star,
-  Car,
-  Clock,
-  ChevronRight,
-  Edit2,
-  CheckCircle,
-  AlertCircle
-} from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import type { RootState } from '@/store';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { LoadingScreen } from '@/components/ui/loading';
 
 export default function DriverProfilePage() {
@@ -43,235 +28,126 @@ export default function DriverProfilePage() {
     return <LoadingScreen />;
   }
 
+  const initials = `${user?.firstName?.[0] || ''}${user?.lastName?.[0] || ''}`.toUpperCase();
   const isSubscribed = driver?.isSubscribed;
 
   return (
-    <div className="min-h-screen bg-gray-bg">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <div className="bg-primary px-4 pt-12 pb-20 safe-area-top">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
-          >
-            <ArrowLeft size={20} className="text-white" />
-          </button>
-          <h1 className="text-xl font-semibold text-white">Driver Profile</h1>
+      <div className="px-6 pt-14 pb-4 safe-area-top">
+        <button
+          onClick={() => router.back()}
+          className="text-black font-medium"
+        >
+          ← Back
+        </button>
+      </div>
+
+      {/* Profile Section */}
+      <div className="px-6 py-8 flex flex-col items-center">
+        {/* Avatar */}
+        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center overflow-hidden mb-4">
+          {user?.profileImage ? (
+            <img 
+              src={user.profileImage} 
+              alt={user.firstName} 
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-2xl font-semibold text-gray-600">{initials}</span>
+          )}
+        </div>
+        
+        {/* Name */}
+        <h1 className="text-xl font-semibold text-black">
+          {user?.firstName} {user?.lastName}
+        </h1>
+        
+        {/* Rating & Status */}
+        <p className="text-gray-500 mt-1">
+          {driver?.rating?.toFixed(1) || '5.0'} ★ · {driver?.totalTrips || 0} trips
+        </p>
+        
+        {/* Subscription Badge */}
+        <div className={`mt-2 px-4 py-1 rounded-full text-sm font-medium ${
+          isSubscribed 
+            ? 'bg-primary/10 text-primary' 
+            : 'bg-gray-100 text-gray-600'
+        }`}>
+          {isSubscribed ? 'Active Subscriber' : 'Not Subscribed'}
         </div>
       </div>
 
-      {/* Profile Card - Overlapping Header */}
-      <div className="px-4 -mt-12">
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
-            {/* Profile Image */}
-            <div className="relative">
-              <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
-                {user?.profileImage ? (
-                  <img 
-                    src={user.profileImage} 
-                    alt={user.firstName} 
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User size={32} className="text-primary" />
-                )}
-              </div>
-              <button className="absolute bottom-0 right-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center shadow-lg">
-                <Camera size={14} className="text-white" />
-              </button>
-            </div>
-
-            {/* Name & Rating */}
-            <div className="flex-1">
-              <h2 className="text-xl font-semibold text-dark">
-                {user?.firstName} {user?.lastName}
-              </h2>
-              <div className="flex items-center gap-2 mt-1">
-                <Star size={16} className="text-accent fill-accent" />
-                <span className="text-gray-600">
-                  {driver?.rating?.toFixed(1) || '5.0'} Rating
-                </span>
-              </div>
-              {/* Subscription Status */}
-              <div className="flex items-center gap-1 mt-1">
-                {isSubscribed ? (
-                  <>
-                    <CheckCircle size={14} className="text-primary" />
-                    <span className="text-xs text-primary font-medium">Active Subscriber</span>
-                  </>
-                ) : (
-                  <>
-                    <AlertCircle size={14} className="text-danger" />
-                    <span className="text-xs text-danger font-medium">Not Subscribed</span>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <Edit2 size={20} className="text-gray-500" />
-            </button>
-          </div>
-        </Card>
-      </div>
-
-      {/* Subscription Banner */}
+      {/* Subscribe Banner (if not subscribed) */}
       {!isSubscribed && (
-        <div className="px-4 mt-4">
-          <Card className="bg-accent/10 border-accent/20">
-            <div className="p-4 flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-dark">Subscribe to Drive</p>
-                <p className="text-sm text-gray-600">
-                  Only <span className="text-accent font-bold">$1</span>/day to accept rides
-                </p>
-              </div>
-              <Button size="sm" onClick={() => router.push('/driver/daily-fee')}>
-                Subscribe
-              </Button>
-            </div>
-          </Card>
+        <div className="px-6 mb-4">
+          <button
+            onClick={() => router.push('/driver/daily-fee')}
+            className="w-full py-4 bg-black text-white font-semibold rounded-xl"
+          >
+            Subscribe — $1/day
+          </button>
         </div>
       )}
 
-      {/* Info Section */}
-      <div className="px-4 mt-4">
-        <Card>
-          <ProfileItem
-            icon={<Mail size={20} className="text-primary" />}
-            label="Email"
-            value={user?.email || 'Not set'}
-          />
-          <ProfileItem
-            icon={<Phone size={20} className="text-primary" />}
-            label="Phone"
-            value={user?.phone || 'Not set'}
-            showDivider
-          />
-        </Card>
+      {/* Info Cards */}
+      <div className="px-6 space-y-3">
+        <div className="bg-gray-100 rounded-xl p-4">
+          <p className="text-xs text-gray-500 mb-1">Email</p>
+          <p className="text-black">{user?.email || 'Not set'}</p>
+        </div>
+        
+        <div className="bg-gray-100 rounded-xl p-4">
+          <p className="text-xs text-gray-500 mb-1">Phone</p>
+          <p className="text-black">{user?.phone || 'Not set'}</p>
+        </div>
       </div>
 
-      {/* Stats Section */}
-      <div className="px-4 mt-4">
-        <h3 className="text-sm font-medium text-gray-500 mb-2 px-1">STATISTICS</h3>
-        <Card>
-          <div className="grid grid-cols-3 divide-x divide-gray-100">
-            <StatItem
-              icon={<Car size={18} className="text-primary" />}
-              value={driver?.totalTrips?.toString() || '0'}
-              label="Trips"
-            />
-            <StatItem
-              icon={<Clock size={18} className="text-accent" />}
-              value="0"
-              label="Hours"
-            />
-            <StatItem
-              icon={<Star size={18} className="text-yellow-500" />}
-              value={driver?.rating?.toFixed(1) || '5.0'}
-              label="Rating"
-            />
+      {/* Stats */}
+      <div className="px-6 mt-6">
+        <div className="bg-gray-100 rounded-xl p-4">
+          <div className="grid grid-cols-3 text-center">
+            <div>
+              <p className="text-xl font-semibold text-black">{driver?.totalTrips || 0}</p>
+              <p className="text-xs text-gray-500">Trips</p>
+            </div>
+            <div className="border-x border-gray-200">
+              <p className="text-xl font-semibold text-black">{driver?.rating?.toFixed(1) || '5.0'}</p>
+              <p className="text-xs text-gray-500">Rating</p>
+            </div>
+            <div>
+              <p className="text-xl font-semibold text-black">$0</p>
+              <p className="text-xs text-gray-500">Earned</p>
+            </div>
           </div>
-        </Card>
+        </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="px-4 mt-4 pb-8">
-        <h3 className="text-sm font-medium text-gray-500 mb-2 px-1">QUICK ACTIONS</h3>
-        <Card>
-          <ActionItem
-            label="Edit Profile"
-            onClick={() => router.push('/driver/settings')}
-          />
-          <ActionItem
-            label="My Vehicles"
-            onClick={() => router.push('/driver/vehicles')}
-            showDivider
-          />
-          <ActionItem
-            label="Documents"
-            onClick={() => router.push('/driver/documents')}
-            showDivider
-          />
-          <ActionItem
-            label="Earnings"
-            onClick={() => router.push('/driver/earnings')}
-            showDivider
-          />
-          <ActionItem
-            label="Daily Fee"
-            onClick={() => router.push('/driver/daily-fee')}
-            showDivider
-          />
-          <ActionItem
-            label="Trip History"
-            onClick={() => router.push('/driver/history')}
-            showDivider
-          />
-        </Card>
+      {/* Menu Items */}
+      <div className="px-6 mt-6 flex-1">
+        <div className="bg-gray-100 rounded-xl overflow-hidden">
+          <MenuItem label="My Vehicles" onClick={() => router.push('/driver/vehicles')} />
+          <MenuItem label="Documents" onClick={() => router.push('/driver/documents')} border />
+          <MenuItem label="Earnings" onClick={() => router.push('/driver/earnings')} border />
+          <MenuItem label="Daily Fee" onClick={() => router.push('/driver/daily-fee')} border />
+          <MenuItem label="Trip History" onClick={() => router.push('/driver/history')} border />
+          <MenuItem label="Settings" onClick={() => router.push('/driver/settings')} border />
+        </div>
       </div>
+
+      {/* Bottom spacing */}
+      <div className="h-8" />
     </div>
   );
 }
 
-function ProfileItem({ 
-  icon, 
-  label, 
-  value,
-  showDivider = false
-}: { 
-  icon: React.ReactNode; 
-  label: string; 
-  value: string;
-  showDivider?: boolean;
-}) {
-  return (
-    <div className={`flex items-center gap-4 p-4 ${showDivider ? 'border-t border-gray-100' : ''}`}>
-      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-        {icon}
-      </div>
-      <div className="flex-1">
-        <p className="text-xs text-gray-500">{label}</p>
-        <p className="text-dark font-medium">{value}</p>
-      </div>
-    </div>
-  );
-}
-
-function StatItem({ 
-  icon, 
-  value, 
-  label 
-}: { 
-  icon: React.ReactNode; 
-  value: string; 
-  label: string;
-}) {
-  return (
-    <div className="flex flex-col items-center py-4">
-      {icon}
-      <span className="text-lg font-bold text-dark mt-1">{value}</span>
-      <span className="text-xs text-gray-500">{label}</span>
-    </div>
-  );
-}
-
-function ActionItem({ 
-  label, 
-  onClick,
-  showDivider = false
-}: { 
-  label: string; 
-  onClick: () => void;
-  showDivider?: boolean;
-}) {
+function MenuItem({ label, onClick, border = false }: { label: string; onClick: () => void; border?: boolean }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between p-4 hover:bg-gray-50 ${showDivider ? 'border-t border-gray-100' : ''}`}
+      className={`w-full flex items-center justify-between p-4 hover:bg-gray-200 transition-colors ${border ? 'border-t border-gray-200' : ''}`}
     >
-      <span className="text-dark">{label}</span>
+      <span className="text-black">{label}</span>
       <ChevronRight size={20} className="text-gray-400" />
     </button>
   );

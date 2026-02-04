@@ -3,21 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { 
-  ArrowLeft, 
-  HelpCircle,
-  MessageCircle,
-  FileText,
-  Phone,
-  Mail,
-  ChevronRight,
-  ChevronDown,
-  Search,
-  AlertCircle
-} from 'lucide-react';
 import type { RootState } from '@/store';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { LoadingScreen } from '@/components/ui/loading';
 
 const faqs = [
@@ -77,171 +63,79 @@ export default function RiderHelpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-bg">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <div className="bg-primary px-4 pt-12 pb-8 safe-area-top">
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
-          >
-            <ArrowLeft size={20} className="text-white" />
-          </button>
-          <h1 className="text-xl font-semibold text-white">Help & Support</h1>
-        </div>
-
-        {/* Search */}
-        <div className="relative">
-          <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search for help..."
-            className="w-full pl-12 pr-4 py-3 bg-white rounded-xl text-dark placeholder-gray-400"
-          />
-        </div>
+      <div className="px-6 pt-14 pb-4 safe-area-top">
+        <button onClick={() => router.back()} className="text-black font-medium">
+          ← Back
+        </button>
+        <h1 className="text-xl font-semibold text-black mt-4">Help & Support</h1>
       </div>
 
-      {/* Quick Actions */}
-      <div className="px-4 -mt-4">
-        <Card className="p-4">
-          <div className="grid grid-cols-3 gap-4">
-            <QuickAction
-              icon={<MessageCircle size={20} />}
-              label="Chat"
-              onClick={() => {}}
-            />
-            <QuickAction
-              icon={<Phone size={20} />}
-              label="Call"
-              onClick={() => window.open('tel:+263780000000')}
-            />
-            <QuickAction
-              icon={<Mail size={20} />}
-              label="Email"
-              onClick={() => window.open('mailto:support@hande.co.zw')}
-            />
-          </div>
-        </Card>
-      </div>
-
-      {/* Content */}
-      <div className="p-4">
-        {/* Report Issue */}
-        <Card className="p-4 mb-4 bg-accent/10 border-accent/20">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-accent/20 rounded-full flex items-center justify-center">
-              <AlertCircle size={24} className="text-accent" />
-            </div>
-            <div className="flex-1">
-              <p className="font-medium text-dark">Report an issue</p>
-              <p className="text-sm text-gray-600">Had a problem with a recent trip?</p>
-            </div>
-            <Button size="sm" onClick={() => {}}>
-              Report
-            </Button>
-          </div>
-        </Card>
-
-        {/* FAQs */}
-        <div>
-          <h3 className="text-sm font-medium text-gray-500 mb-3 px-1">
-            FREQUENTLY ASKED QUESTIONS
-          </h3>
-          <Card>
-            {filteredFaqs.map((faq, index) => (
-              <FaqItem
-                key={index}
-                question={faq.question}
-                answer={faq.answer}
-                isExpanded={expandedFaq === index}
-                onToggle={() => setExpandedFaq(expandedFaq === index ? null : index)}
-                showDivider={index > 0}
-              />
-            ))}
-            {filteredFaqs.length === 0 && (
-              <div className="p-6 text-center">
-                <HelpCircle size={32} className="mx-auto text-gray-300 mb-2" />
-                <p className="text-gray-500 text-sm">No results found</p>
-              </div>
-            )}
-          </Card>
-        </div>
-
-        {/* Contact Info */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500 mb-2">Need more help?</p>
-          <p className="text-sm text-gray-600">
-            Email us at{' '}
-            <a href="mailto:support@hande.co.zw" className="text-primary font-medium">
-              support@hande.co.zw
-            </a>
-          </p>
-          <p className="text-sm text-gray-600 mt-1">
-            Call us at{' '}
-            <a href="tel:+263780000000" className="text-primary font-medium">
-              +263 78 000 0000
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function QuickAction({ 
-  icon, 
-  label, 
-  onClick 
-}: { 
-  icon: React.ReactNode; 
-  label: string; 
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-gray-50 transition-colors"
-    >
-      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-primary">
-        {icon}
-      </div>
-      <span className="text-sm text-dark">{label}</span>
-    </button>
-  );
-}
-
-function FaqItem({
-  question,
-  answer,
-  isExpanded,
-  onToggle,
-  showDivider,
-}: {
-  question: string;
-  answer: string;
-  isExpanded: boolean;
-  onToggle: () => void;
-  showDivider: boolean;
-}) {
-  return (
-    <div className={showDivider ? 'border-t border-gray-100' : ''}>
-      <button
-        onClick={onToggle}
-        className="w-full flex items-center justify-between p-4 text-left"
-      >
-        <span className="font-medium text-dark pr-4">{question}</span>
-        <ChevronDown 
-          size={20} 
-          className={`text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+      {/* Search */}
+      <div className="px-6 mb-4">
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search for help..."
+          className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
         />
-      </button>
-      {isExpanded && (
-        <div className="px-4 pb-4">
-          <p className="text-sm text-gray-600 leading-relaxed">{answer}</p>
+      </div>
+
+      {/* Quick Contact */}
+      <div className="px-6 mb-4">
+        <div className="flex gap-3">
+          <button 
+            onClick={() => window.open('tel:+263780000000')}
+            className="flex-1 bg-gray-100 rounded-xl p-4 text-center"
+          >
+            <p className="font-medium text-black">Call</p>
+          </button>
+          <button 
+            onClick={() => window.open('mailto:support@hande.co.zw')}
+            className="flex-1 bg-gray-100 rounded-xl p-4 text-center"
+          >
+            <p className="font-medium text-black">Email</p>
+          </button>
         </div>
-      )}
+      </div>
+
+      {/* FAQs */}
+      <div className="px-6 flex-1">
+        <p className="text-sm text-gray-500 mb-2">Frequently Asked Questions</p>
+        <div className="space-y-2">
+          {filteredFaqs.map((faq, index) => (
+            <div key={index} className="bg-gray-100 rounded-xl overflow-hidden">
+              <button
+                onClick={() => setExpandedFaq(expandedFaq === index ? null : index)}
+                className="w-full p-4 text-left flex items-center justify-between"
+              >
+                <span className="font-medium text-black pr-2">{faq.question}</span>
+                <span className="text-gray-400">{expandedFaq === index ? '−' : '+'}</span>
+              </button>
+              {expandedFaq === index && (
+                <div className="px-4 pb-4">
+                  <p className="text-sm text-gray-600">{faq.answer}</p>
+                </div>
+              )}
+            </div>
+          ))}
+          {filteredFaqs.length === 0 && (
+            <div className="bg-gray-100 rounded-xl p-6 text-center">
+              <p className="text-gray-500">No results found</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Contact Info */}
+      <div className="px-6 py-8 text-center">
+        <p className="text-sm text-gray-500">Need more help?</p>
+        <p className="text-sm text-gray-600 mt-1">
+          support@hande.co.zw · +263 78 000 0000
+        </p>
+      </div>
     </div>
   );
 }

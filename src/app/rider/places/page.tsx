@@ -3,20 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Home,
-  Briefcase,
-  Star,
-  Plus,
-  Trash2,
-  Edit2,
-  X
-} from 'lucide-react';
 import type { RootState } from '@/store';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { LoadingScreen } from '@/components/ui/loading';
 import { riderService, SavedLocation } from '@/lib/services';
 
@@ -71,92 +58,89 @@ export default function RiderPlacesPage() {
   const otherLocations = locations.filter(l => l.type === 'other');
 
   return (
-    <div className="min-h-screen bg-gray-bg">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <div className="bg-white px-4 pt-12 pb-4 safe-area-top shadow-sm">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.back()}
-              className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center"
-            >
-              <ArrowLeft size={20} className="text-dark" />
-            </button>
-            <h1 className="text-xl font-semibold text-dark">Saved Places</h1>
-          </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="w-10 h-10 bg-primary rounded-full flex items-center justify-center"
-          >
-            <Plus size={20} className="text-white" />
+      <div className="px-6 pt-14 pb-4 safe-area-top flex items-center justify-between">
+        <div>
+          <button onClick={() => router.back()} className="text-black font-medium">
+            ← Back
           </button>
+          <h1 className="text-xl font-semibold text-black mt-4">Saved Places</h1>
         </div>
+        <button
+          onClick={() => setShowAddModal(true)}
+          className="text-primary font-medium"
+        >
+          + Add
+        </button>
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="px-6 flex-1">
         {error && (
-          <Card className="p-4 bg-danger/10 border-danger/20 mb-4">
-            <p className="text-danger text-sm">{error}</p>
-          </Card>
+          <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-4 text-sm">
+            {error}
+          </div>
         )}
 
         {/* Home & Work */}
         <div className="space-y-3 mb-6">
-          <h3 className="text-sm font-medium text-gray-500 px-1">FAVORITES</h3>
+          <p className="text-sm text-gray-500">Favorites</p>
           
-          <LocationCard
-            icon={<Home size={20} className="text-primary" />}
-            title="Home"
-            address={homeLocation?.address}
-            onEdit={() => {}}
-            onDelete={homeLocation ? () => handleDelete(homeLocation.id) : undefined}
-            onAdd={!homeLocation ? () => setShowAddModal(true) : undefined}
-          />
+          <div className="bg-gray-100 rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-black">Home</p>
+              {homeLocation?.address ? (
+                <p className="text-sm text-gray-500 truncate max-w-[200px]">{homeLocation.address}</p>
+              ) : (
+                <button onClick={() => setShowAddModal(true)} className="text-sm text-primary">+ Add</button>
+              )}
+            </div>
+            {homeLocation && (
+              <button onClick={() => handleDelete(homeLocation.id)} className="text-sm text-red-500">Delete</button>
+            )}
+          </div>
           
-          <LocationCard
-            icon={<Briefcase size={20} className="text-accent" />}
-            title="Work"
-            address={workLocation?.address}
-            onEdit={() => {}}
-            onDelete={workLocation ? () => handleDelete(workLocation.id) : undefined}
-            onAdd={!workLocation ? () => setShowAddModal(true) : undefined}
-          />
+          <div className="bg-gray-100 rounded-xl p-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium text-black">Work</p>
+              {workLocation?.address ? (
+                <p className="text-sm text-gray-500 truncate max-w-[200px]">{workLocation.address}</p>
+              ) : (
+                <button onClick={() => setShowAddModal(true)} className="text-sm text-primary">+ Add</button>
+              )}
+            </div>
+            {workLocation && (
+              <button onClick={() => handleDelete(workLocation.id)} className="text-sm text-red-500">Delete</button>
+            )}
+          </div>
         </div>
 
-        {/* Other Saved Places */}
+        {/* Other Places */}
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-gray-500 px-1">OTHER PLACES</h3>
+          <p className="text-sm text-gray-500">Other Places</p>
           
           {otherLocations.length === 0 ? (
-            <Card className="p-6 text-center">
-              <MapPin size={32} className="mx-auto text-gray-300 mb-2" />
-              <p className="text-gray-500 text-sm">No other saved places</p>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="mt-3"
-                onClick={() => setShowAddModal(true)}
-              >
-                <Plus size={16} className="mr-1" /> Add Place
-              </Button>
-            </Card>
+            <div className="bg-gray-100 rounded-xl p-6 text-center">
+              <p className="text-gray-500">No other saved places</p>
+            </div>
           ) : (
             otherLocations.map(location => (
-              <LocationCard
-                key={location.id}
-                icon={<Star size={20} className="text-gray-400" />}
-                title={location.name}
-                address={location.address}
-                onEdit={() => {}}
-                onDelete={() => handleDelete(location.id)}
-              />
+              <div key={location.id} className="bg-gray-100 rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-black">{location.name}</p>
+                  <p className="text-sm text-gray-500 truncate max-w-[200px]">{location.address}</p>
+                </div>
+                <button onClick={() => handleDelete(location.id)} className="text-sm text-red-500">Delete</button>
+              </div>
             ))
           )}
         </div>
       </div>
 
-      {/* Add Modal (simplified) */}
+      <div className="h-8" />
+
+      {/* Add Modal */}
       {showAddModal && (
         <AddLocationModal 
           onClose={() => setShowAddModal(false)}
@@ -172,59 +156,6 @@ export default function RiderPlacesPage() {
         />
       )}
     </div>
-  );
-}
-
-function LocationCard({
-  icon,
-  title,
-  address,
-  onEdit,
-  onDelete,
-  onAdd,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  address?: string;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onAdd?: () => void;
-}) {
-  return (
-    <Card className="p-4">
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-          {icon}
-        </div>
-        <div className="flex-1">
-          <p className="font-medium text-dark">{title}</p>
-          {address ? (
-            <p className="text-sm text-gray-500 truncate">{address}</p>
-          ) : (
-            <button 
-              onClick={onAdd}
-              className="text-sm text-primary font-medium"
-            >
-              + Add address
-            </button>
-          )}
-        </div>
-        {address && (
-          <div className="flex items-center gap-2">
-            {onEdit && (
-              <button onClick={onEdit} className="p-2 hover:bg-gray-100 rounded-full">
-                <Edit2 size={16} className="text-gray-400" />
-              </button>
-            )}
-            {onDelete && (
-              <button onClick={onDelete} className="p-2 hover:bg-gray-100 rounded-full">
-                <Trash2 size={16} className="text-danger" />
-              </button>
-            )}
-          </div>
-        )}
-      </div>
-    </Card>
   );
 }
 
@@ -249,7 +180,7 @@ function AddLocationModal({
       name,
       address,
       type,
-      latitude: 0, // TODO: Geocode address
+      latitude: 0,
       longitude: 0,
     });
     setIsLoading(false);
@@ -257,58 +188,51 @@ function AddLocationModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end">
-      <div className="bg-white w-full rounded-t-2xl p-6 safe-area-bottom animate-slide-up">
+      <div className="bg-white w-full rounded-t-2xl p-6 safe-area-bottom">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold text-dark">Add Saved Place</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20} className="text-gray-500" />
-          </button>
+          <h2 className="text-xl font-semibold text-black">Add Saved Place</h2>
+          <button onClick={onClose} className="text-gray-500">✕</button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
-            <div className="flex gap-2">
-              {(['home', 'work', 'other'] as const).map(t => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => setType(t)}
-                  className={`flex-1 py-2 px-4 rounded-lg border capitalize ${
-                    type === t ? 'border-primary bg-primary/10 text-primary' : 'border-gray-200 text-gray-600'
-                  }`}
-                >
-                  {t}
-                </button>
-              ))}
-            </div>
+          <div className="flex gap-2">
+            {(['home', 'work', 'other'] as const).map(t => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setType(t)}
+                className={`flex-1 py-3 rounded-xl border capitalize ${
+                  type === t ? 'border-primary bg-primary/10 text-primary' : 'border-gray-200 text-gray-600'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="e.g., Gym, Mom's House"
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-          </div>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Name (e.g., Gym)"
+            className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          />
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Enter address"
-              className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            />
-          </div>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Address"
+            className="w-full px-4 py-4 bg-gray-100 rounded-xl text-black placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
+          />
 
-          <Button type="submit" fullWidth disabled={isLoading || !name || !address}>
+          <button 
+            type="submit" 
+            disabled={isLoading || !name || !address}
+            className="w-full py-4 bg-primary text-white font-semibold rounded-xl disabled:opacity-50"
+          >
             {isLoading ? 'Saving...' : 'Save Place'}
-          </Button>
+          </button>
         </form>
       </div>
     </div>

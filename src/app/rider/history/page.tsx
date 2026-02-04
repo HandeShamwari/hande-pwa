@@ -3,18 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { 
-  ArrowLeft, 
-  MapPin, 
-  Calendar,
-  Clock,
-  DollarSign,
-  Star,
-  ChevronRight,
-  Car
-} from 'lucide-react';
 import type { RootState } from '@/store';
-import { Card } from '@/components/ui/card';
 import { LoadingScreen } from '@/components/ui/loading';
 import { riderService, Trip } from '@/lib/services';
 
@@ -53,121 +42,75 @@ export default function RiderHistoryPage() {
     return <LoadingScreen />;
   }
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
   return (
-    <div className="min-h-screen bg-gray-bg">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <div className="bg-white px-4 pt-12 pb-4 safe-area-top shadow-sm">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center"
-          >
-            <ArrowLeft size={20} className="text-dark" />
-          </button>
-          <h1 className="text-xl font-semibold text-dark">Trip History</h1>
-        </div>
+      <div className="px-6 pt-14 pb-4 safe-area-top">
+        <button onClick={() => router.back()} className="text-black font-medium">
+          ← Back
+        </button>
+        <h1 className="text-xl font-semibold text-black mt-4">Trip History</h1>
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="px-6 flex-1">
         {error && (
-          <Card className="p-4 bg-danger/10 border-danger/20 mb-4">
-            <p className="text-danger text-sm">{error}</p>
-          </Card>
+          <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-4 text-sm">
+            {error}
+          </div>
         )}
 
         {trips.length === 0 ? (
-          <Card className="p-8 text-center">
-            <Car size={48} className="mx-auto text-gray-300 mb-4" />
-            <h3 className="text-lg font-medium text-dark mb-2">No trips yet</h3>
-            <p className="text-gray-500 text-sm">Your completed trips will appear here</p>
-          </Card>
+          <div className="bg-gray-100 rounded-xl p-8 text-center">
+            <p className="text-gray-500">No trips yet</p>
+            <p className="text-sm text-gray-400 mt-1">Your completed trips will appear here</p>
+          </div>
         ) : (
           <div className="space-y-3">
             {trips.map((trip) => (
-              <TripCard key={trip.id} trip={trip} onClick={() => {}} />
+              <div key={trip.id} className="bg-gray-100 rounded-xl p-4">
+                <div className="flex justify-between items-start mb-3">
+                  <span className="text-sm text-gray-500">{formatDate(trip.createdAt)}</span>
+                  <span className={`text-xs px-2 py-1 rounded-full capitalize ${
+                    trip.status === 'completed' ? 'bg-primary/20 text-primary' :
+                    trip.status === 'cancelled' ? 'bg-red-100 text-red-600' :
+                    'bg-gray-200 text-gray-600'
+                  }`}>
+                    {trip.status.replace('_', ' ')}
+                  </span>
+                </div>
+                <div className="space-y-2 mb-3">
+                  <div className="flex gap-3">
+                    <div className="w-2 h-2 rounded-full bg-primary mt-1.5 shrink-0" />
+                    <p className="text-sm text-black truncate">{trip.pickupAddress}</p>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="w-2 h-2 rounded-full bg-black mt-1.5 shrink-0" />
+                    <p className="text-sm text-black truncate">{trip.dropoffAddress}</p>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center pt-3 border-t border-gray-200">
+                  <span className="font-semibold text-black">
+                    ${(trip.actualFare || trip.estimatedFare).toFixed(2)}
+                  </span>
+                  {trip.driver && (
+                    <span className="text-sm text-gray-500">
+                      {trip.driver.rating?.toFixed(1) || '5.0'} ★
+                    </span>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         )}
       </div>
+
+      <div className="h-8" />
     </div>
-  );
-}
-
-function TripCard({ trip, onClick }: { trip: Trip; onClick: () => void }) {
-  const statusColors: Record<string, string> = {
-    completed: 'bg-primary/10 text-primary',
-    cancelled: 'bg-danger/10 text-danger',
-    pending: 'bg-accent/10 text-accent',
-    in_progress: 'bg-blue-100 text-blue-600',
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: 'numeric'
-    });
-  };
-
-  const formatTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true
-    });
-  };
-
-  return (
-    <Card className="p-4" onClick={onClick}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Calendar size={14} className="text-gray-400" />
-          <span className="text-sm text-gray-500">{formatDate(trip.createdAt)}</span>
-          <Clock size={14} className="text-gray-400 ml-2" />
-          <span className="text-sm text-gray-500">{formatTime(trip.createdAt)}</span>
-        </div>
-        <span className={`text-xs px-2 py-1 rounded-full capitalize ${statusColors[trip.status] || 'bg-gray-100 text-gray-600'}`}>
-          {trip.status.replace('_', ' ')}
-        </span>
-      </div>
-
-      <div className="space-y-2 mb-3">
-        <div className="flex items-start gap-3">
-          <div className="w-2 h-2 rounded-full bg-primary mt-1.5" />
-          <div className="flex-1">
-            <p className="text-sm text-gray-500">Pickup</p>
-            <p className="text-dark text-sm font-medium truncate">{trip.pickupAddress}</p>
-          </div>
-        </div>
-        <div className="flex items-start gap-3">
-          <div className="w-2 h-2 rounded-full bg-danger mt-1.5" />
-          <div className="flex-1">
-            <p className="text-sm text-gray-500">Dropoff</p>
-            <p className="text-dark text-sm font-medium truncate">{trip.dropoffAddress}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <DollarSign size={16} className="text-accent" />
-            <span className="font-semibold text-dark">
-              ${(trip.actualFare || trip.estimatedFare).toFixed(2)}
-            </span>
-          </div>
-          {trip.driver && (
-            <div className="flex items-center gap-1">
-              <Star size={14} className="text-accent fill-accent" />
-              <span className="text-sm text-gray-600">{trip.driver.rating?.toFixed(1) || '5.0'}</span>
-            </div>
-          )}
-        </div>
-        <ChevronRight size={20} className="text-gray-400" />
-      </div>
-    </Card>
   );
 }
