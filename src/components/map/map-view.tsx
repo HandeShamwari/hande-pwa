@@ -28,9 +28,17 @@ export function MapView({
   const markersRef = useRef<google.maps.Marker[]>([]);
   const directionsRenderer = useRef<google.maps.DirectionsRenderer | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Ensure client-side only rendering
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Initialize map
   useEffect(() => {
+    if (!isMounted) return;
+    
     const loader = new Loader({
       apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
       version: 'weekly',
@@ -78,7 +86,7 @@ export function MapView({
       markersRef.current.forEach(m => m.setMap(null));
       markersRef.current = [];
     };
-  }, []);
+  }, [isMounted]);
 
   // Update markers
   useEffect(() => {
@@ -189,12 +197,12 @@ export function MapView({
   }, [center]);
 
   return (
-    <div ref={mapRef} className="w-full h-full bg-gray-100">
-      {!isLoaded && (
+    <div ref={mapRef} className="w-full h-full bg-gray-100" suppressHydrationWarning>
+      {!isMounted || !isLoaded ? (
         <div className="w-full h-full flex items-center justify-center">
           <div className="animate-pulse text-gray-400">Loading map...</div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
