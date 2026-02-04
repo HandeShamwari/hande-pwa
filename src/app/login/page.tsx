@@ -49,23 +49,23 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-white flex flex-col px-6 safe-area-top safe-area-bottom">
       {/* Header with Logo */}
-      <div className="pt-12 pb-8">
+      <div className="pt-16 pb-6">
         <Image
           src="/logo.png"
           alt="Hande"
-          width={80}
-          height={80}
+          width={120}
+          height={120}
           className="mx-auto"
           priority
         />
       </div>
 
       {/* Welcome Text */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold text-black mb-2">
+      <div className="text-center mb-8">
+        <h1 className="text-xl font-semibold text-black mb-1">
           Welcome Back
         </h1>
-        <p className="text-gray-500">
+        <p className="text-gray-400 text-sm">
           Sign in to your account
         </p>
       </div>
