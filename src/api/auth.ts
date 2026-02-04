@@ -78,7 +78,8 @@ export const authApi = {
   },
 
   registerDriver: async (data: DriverRegisterData): Promise<AuthResponse> => {
-    const response = await api.post('/auth/register/driver', data);
+    // Use the same endpoint, userType is already 'driver' in data
+    const response = await api.post('/auth/register', { ...data, userType: 'driver' });
     setAuthToken(response.data.token);
     return response.data;
   },
