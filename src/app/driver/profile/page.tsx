@@ -11,7 +11,6 @@ import {
   Camera,
   Star,
   Car,
-  DollarSign,
   Clock,
   ChevronRight,
   Edit2,
@@ -157,19 +156,14 @@ export default function DriverProfilePage() {
       <div className="px-4 mt-4">
         <h3 className="text-sm font-medium text-gray-500 mb-2 px-1">STATISTICS</h3>
         <Card>
-          <div className="grid grid-cols-4 divide-x divide-gray-100">
+          <div className="grid grid-cols-3 divide-x divide-gray-100">
             <StatItem
               icon={<Car size={18} className="text-primary" />}
               value={driver?.totalTrips?.toString() || '0'}
               label="Trips"
             />
             <StatItem
-              icon={<DollarSign size={18} className="text-accent" />}
-              value={`$${driver?.totalEarnings?.toFixed(0) || '0'}`}
-              label="Earned"
-            />
-            <StatItem
-              icon={<Clock size={18} className="text-blue-500" />}
+              icon={<Clock size={18} className="text-accent" />}
               value="0"
               label="Hours"
             />
