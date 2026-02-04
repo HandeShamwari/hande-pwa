@@ -79,7 +79,7 @@ export default function DriverVehiclesPage() {
                   <div className="flex-1 text-left">
                     <p className="font-semibold text-black">{vehicle.make} {vehicle.model}</p>
                     <p className="text-sm text-gray-500">{vehicle.year} • {vehicle.color}</p>
-                    <p className="text-sm text-gray-500">{vehicle.plateNumber}</p>
+                    <p className="text-sm text-gray-500">{vehicle.licensePlate}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${vehicle.isActive ? 'bg-primary/20 text-primary' : 'bg-gray-200 text-gray-500'}`}>

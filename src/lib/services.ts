@@ -61,7 +61,7 @@ export interface Vehicle {
   model: string;
   year: number;
   color: string;
-  plate: string;
+  licensePlate: string;
   type: 'sedan' | 'suv' | 'van' | 'motorcycle';
   isActive: boolean;
   isVerified: boolean;
