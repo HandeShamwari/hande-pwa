@@ -3,19 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
-import { 
-  ArrowLeft, 
-  DollarSign,
-  TrendingUp,
-  Calendar,
-  Clock,
-  Car,
-  ArrowUpRight,
-  ChevronRight
-} from 'lucide-react';
 import type { RootState } from '@/store';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { LoadingScreen } from '@/components/ui/loading';
 import { driverService, DriverEarnings, DriverStats } from '@/lib/services';
 
@@ -73,225 +61,125 @@ export default function DriverEarningsPage() {
     }
   };
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-bg">
-      {/* Header */}
-      <div className="bg-primary px-4 pt-12 pb-8 safe-area-top">
-        <div className="flex items-center gap-4 mb-6">
-          <button
-            onClick={() => router.back()}
-            className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
-          >
-            <ArrowLeft size={20} className="text-white" />
-          </button>
-          <h1 className="text-xl font-semibold text-white">Earnings</h1>
-        </div>
-
-        {/* Total Earnings Card */}
-        <Card className="bg-white/10 backdrop-blur border-white/20">
-          <div className="p-6">
-            <p className="text-white/70 text-sm mb-1">Total Earnings ({period})</p>
-            <div className="flex items-baseline gap-2">
-              <span className="text-4xl font-bold text-white">
-                ${earnings?.totalEarnings?.toFixed(2) || '0.00'}
-              </span>
-              {earnings?.netEarnings !== undefined && (
-                <span className="text-sm text-white/70">
-                  (Net: ${earnings.netEarnings.toFixed(2)})
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-4 mt-4">
-              <div className="flex items-center gap-2">
-                <Car size={16} className="text-white/70" />
-                <span className="text-white/90">{earnings?.tripCount || 0} trips</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <DollarSign size={16} className="text-accent" />
-                <span className="text-white/90">
-                  ${earnings?.dailyFeePaid?.toFixed(2) || '0'} fees
-                </span>
-              </div>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Period Selector */}
-      <div className="px-4 -mt-4">
-        <Card className="p-2">
-          <div className="flex">
-            {(['today', 'week', 'month', 'all'] as Period[]).map((p) => (
-              <button
-                key={p}
-                onClick={() => setPeriod(p)}
-                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium capitalize transition-colors ${
-                  period === p
-                    ? 'bg-primary text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                {p === 'all' ? 'All Time' : p}
-              </button>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* Content */}
-      <div className="p-4">
-        {error && (
-          <Card className="p-4 bg-danger/10 border-danger/20 mb-4">
-            <p className="text-danger text-sm">{error}</p>
-          </Card>
-        )}
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <StatCard
-            icon={<TrendingUp size={20} className="text-primary" />}
-            value={`${stats?.acceptanceRate?.toFixed(0) || 0}%`}
-            label="Acceptance Rate"
-          />
-          <StatCard
-            icon={<Clock size={20} className="text-accent" />}
-            value={`${stats?.completionRate?.toFixed(0) || 0}%`}
-            label="Completion Rate"
-          />
-        </div>
-
-        {/* Quick Stats */}
-        <Card className="mb-4">
-          <div className="grid grid-cols-3 divide-x divide-gray-100">
-            <QuickStat
-              label="Today"
-              trips={stats?.todayTrips || 0}
-              earnings={stats?.todayEarnings || 0}
-            />
-            <QuickStat
-              label="This Week"
-              trips={stats?.weekTrips || 0}
-              earnings={stats?.weekEarnings || 0}
-            />
-            <QuickStat
-              label="Total"
-              trips={stats?.totalTrips || 0}
-              earnings={stats?.totalEarnings || 0}
-            />
-          </div>
-        </Card>
-
-        {/* Earnings Breakdown */}
-        <div>
-          <h3 className="text-sm font-medium text-gray-500 mb-3 px-1">
-            DAILY BREAKDOWN
-          </h3>
-          <Card>
-            {earnings?.breakdown && earnings.breakdown.length > 0 ? (
-              earnings.breakdown.map((day, index) => (
-                <DayBreakdown
-                  key={day.date}
-                  date={day.date}
-                  trips={day.trips}
-                  earnings={day.earnings}
-                  showDivider={index > 0}
-                />
-              ))
-            ) : (
-              <div className="p-6 text-center">
-                <DollarSign size={32} className="mx-auto text-gray-300 mb-2" />
-                <p className="text-gray-500 text-sm">No earnings data for this period</p>
-              </div>
-            )}
-          </Card>
-        </div>
-
-        {/* Payout Button */}
-        <div className="mt-6">
-          <Button fullWidth onClick={() => router.push('/driver/daily-fee')}>
-            <DollarSign size={18} className="mr-2" />
-            Manage Payouts
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function StatCard({
-  icon,
-  value,
-  label,
-}: {
-  icon: React.ReactNode;
-  value: string;
-  label: string;
-}) {
-  return (
-    <Card className="p-4">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-          {icon}
-        </div>
-        <div>
-          <p className="text-xl font-bold text-dark">{value}</p>
-          <p className="text-xs text-gray-500">{label}</p>
-        </div>
-      </div>
-    </Card>
-  );
-}
-
-function QuickStat({
-  label,
-  trips,
-  earnings,
-}: {
-  label: string;
-  trips: number;
-  earnings: number;
-}) {
-  return (
-    <div className="p-4 text-center">
-      <p className="text-xs text-gray-500 mb-1">{label}</p>
-      <p className="text-lg font-bold text-dark">${earnings.toFixed(0)}</p>
-      <p className="text-xs text-gray-400">{trips} trips</p>
-    </div>
-  );
-}
-
-function DayBreakdown({
-  date,
-  trips,
-  earnings,
-  showDivider,
-}: {
-  date: string;
-  trips: number;
-  earnings: number;
-  showDivider: boolean;
-}) {
   const formatDate = (dateString: string) => {
     const d = new Date(dateString);
     return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
   };
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className={`flex items-center justify-between p-4 ${showDivider ? 'border-t border-gray-100' : ''}`}>
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-          <Calendar size={18} className="text-primary" />
-        </div>
-        <div>
-          <p className="font-medium text-dark">{formatDate(date)}</p>
-          <p className="text-sm text-gray-500">{trips} trips</p>
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Header */}
+      <div className="px-6 pt-14 pb-4 safe-area-top">
+        <button onClick={() => router.back()} className="text-black font-medium">
+          ← Back
+        </button>
+        <h1 className="text-xl font-semibold text-black mt-4">Earnings</h1>
+      </div>
+
+      {/* Total Earnings */}
+      <div className="px-6 mb-4">
+        <div className="bg-primary rounded-xl p-6 text-white">
+          <p className="text-white/70 text-sm mb-1">Total Earnings ({period})</p>
+          <p className="text-4xl font-bold">${earnings?.totalEarnings?.toFixed(2) || '0.00'}</p>
+          <div className="flex gap-4 mt-4 text-sm">
+            <span>{earnings?.tripCount || 0} trips</span>
+            <span>· ${earnings?.dailyFeePaid?.toFixed(2) || '0'} fees paid</span>
+          </div>
         </div>
       </div>
-      <p className="font-semibold text-dark">${earnings.toFixed(2)}</p>
+
+      {/* Period Selector */}
+      <div className="px-6 mb-4">
+        <div className="bg-gray-100 rounded-xl p-1 flex">
+          {(['today', 'week', 'month', 'all'] as Period[]).map((p) => (
+            <button
+              key={p}
+              onClick={() => setPeriod(p)}
+              className={`flex-1 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
+                period === p ? 'bg-white text-black shadow-sm' : 'text-gray-600'
+              }`}
+            >
+              {p === 'all' ? 'All' : p}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="px-6 flex-1">
+        {error && (
+          <div className="bg-red-50 rounded-xl p-4 mb-4">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
+
+        {/* Stats */}
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="bg-gray-100 rounded-xl p-4">
+            <p className="text-2xl font-bold text-black">{stats?.acceptanceRate?.toFixed(0) || 0}%</p>
+            <p className="text-sm text-gray-500">Acceptance</p>
+          </div>
+          <div className="bg-gray-100 rounded-xl p-4">
+            <p className="text-2xl font-bold text-black">{stats?.completionRate?.toFixed(0) || 0}%</p>
+            <p className="text-sm text-gray-500">Completion</p>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="bg-gray-100 rounded-xl mb-4">
+          <div className="grid grid-cols-3 divide-x divide-gray-200">
+            <div className="p-4 text-center">
+              <p className="text-xs text-gray-500">Today</p>
+              <p className="text-lg font-bold text-black">${stats?.todayEarnings?.toFixed(0) || 0}</p>
+              <p className="text-xs text-gray-400">{stats?.todayTrips || 0} trips</p>
+            </div>
+            <div className="p-4 text-center">
+              <p className="text-xs text-gray-500">Week</p>
+              <p className="text-lg font-bold text-black">${stats?.weekEarnings?.toFixed(0) || 0}</p>
+              <p className="text-xs text-gray-400">{stats?.weekTrips || 0} trips</p>
+            </div>
+            <div className="p-4 text-center">
+              <p className="text-xs text-gray-500">Total</p>
+              <p className="text-lg font-bold text-black">${stats?.totalEarnings?.toFixed(0) || 0}</p>
+              <p className="text-xs text-gray-400">{stats?.totalTrips || 0} trips</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Daily Breakdown */}
+        <p className="text-sm text-gray-500 mb-2">Daily Breakdown</p>
+        <div className="space-y-2">
+          {earnings?.breakdown && earnings.breakdown.length > 0 ? (
+            earnings.breakdown.map((day) => (
+              <div key={day.date} className="bg-gray-100 rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-black">{formatDate(day.date)}</p>
+                  <p className="text-sm text-gray-500">{day.trips} trips</p>
+                </div>
+                <p className="font-semibold text-black">${day.earnings.toFixed(2)}</p>
+              </div>
+            ))
+          ) : (
+            <div className="bg-gray-100 rounded-xl p-6 text-center">
+              <p className="text-gray-500">No earnings data</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Payout Button */}
+      <div className="px-6 py-8">
+        <button
+          onClick={() => router.push('/driver/daily-fee')}
+          className="w-full py-4 bg-black text-white font-semibold rounded-xl"
+        >
+          Manage Payouts
+        </button>
+      </div>
     </div>
   );
 }
