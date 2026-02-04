@@ -17,7 +17,7 @@ import { setPickupLocation, setDropoffLocation, setCurrentLocation } from '@/sto
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LoadingScreen } from '@/components/ui/loading';
-import { MapView } from '@/components/map/map-view';
+import { DynamicMap } from '@/components/map/dynamic-map';
 import { BottomSheet } from '@/components/map/bottom-sheet';
 import { LocationSearch } from '@/components/rider/location-search';
 import { TripBooking } from '@/components/rider/trip-booking';
@@ -118,7 +118,7 @@ export default function RiderPage() {
     <div className="h-screen w-full relative overflow-hidden">
       {/* Map - Always visible (70% of screen) */}
       <div className="absolute inset-0">
-        <MapView
+        <DynamicMap
           center={currentLocation || { latitude: -17.8292, longitude: 31.0522 }}
           pickupLocation={pickupLocation}
           dropoffLocation={dropoffLocation}

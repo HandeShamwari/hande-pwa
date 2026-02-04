@@ -25,7 +25,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { LoadingScreen, LoadingOverlay } from '@/components/ui/loading';
-import { MapView } from '@/components/map/map-view';
+import { DynamicMap } from '@/components/map/dynamic-map';
 import { BottomSheet } from '@/components/map/bottom-sheet';
 import { DrawerMenu } from '@/components/shared/drawer-menu';
 import { TripRequestCard } from '@/components/driver/trip-request-card';
@@ -204,7 +204,7 @@ export default function DriverPage() {
     <div className="h-screen w-full relative overflow-hidden">
       {/* Map */}
       <div className="absolute inset-0">
-        <MapView
+        <DynamicMap
           center={currentLocation || { latitude: -17.8292, longitude: 31.0522 }}
           nearbyDrivers={[]} // Don't show other drivers
           driverLocation={activeTrip?.pickup}
