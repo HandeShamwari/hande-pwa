@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { Check, Clock, AlertCircle, ChevronRight } from 'lucide-react';
 import type { RootState } from '@/store';
 import { LoadingScreen } from '@/components/ui/loading';
-import { driverService, Document } from '@/lib/services';
+import { documentsService, Document } from '@/lib/services';
 
 export default function DriverDocumentsPage() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export default function DriverDocumentsPage() {
   const loadDocuments = async () => {
     try {
       setIsLoading(true);
-      const data = await driverService.getDocuments();
+      const data = await documentsService.getDocuments();
       setDocuments(data);
     } catch (err) {
       console.error('Failed to load documents:', err);
