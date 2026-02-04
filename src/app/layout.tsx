@@ -13,14 +13,17 @@ export const metadata: Metadata = {
   title: 'Hande - $1/Day Rides',
   description: 'Affordable rides with transparent pricing. Drivers pay just $1/day - no commissions.',
   manifest: '/manifest.json',
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'Hande',
   },
   icons: {
-    icon: '/icons/icon-192.png',
-    apple: '/icons/apple-icon-180.png',
+    icon: '/icons/icon.svg',
+    apple: '/icons/icon.svg',
   },
 };
 
