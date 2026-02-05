@@ -46,8 +46,13 @@ export const driversApi = {
 
   // Active trip management
   getActiveTrip: async (): Promise<Trip | null> => {
-    const response = await api.get('/drivers/active-trip');
-    return response.data;
+    try {
+      const response = await api.get('/drivers/active-trip');
+      return response.data;
+    } catch {
+      // Endpoint may not exist yet, return null gracefully
+      return null;
+    }
   },
 
   updateTripStatus: async (tripId: string, status: string): Promise<Trip> => {

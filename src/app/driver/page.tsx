@@ -238,7 +238,7 @@ export default function DriverPage() {
           {earnings && (
             <div className="bg-white rounded-full shadow-lg px-4 py-2 flex items-center gap-2">
               <DollarSign size={18} className="text-primary" />
-              <span className="font-semibold text-dark">${earnings.today.toFixed(2)}</span>
+              <span className="font-semibold text-dark">${(earnings?.today || 0).toFixed(2)}</span>
             </div>
           )}
         </div>
@@ -312,15 +312,15 @@ export default function DriverPage() {
             {earnings && (
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="bg-gray-bg rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-dark">${earnings.today.toFixed(0)}</p>
+                  <p className="text-2xl font-bold text-dark">${(earnings?.today || 0).toFixed(0)}</p>
                   <p className="text-xs text-gray-500">Today</p>
                 </div>
                 <div className="bg-gray-bg rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-dark">{earnings.totalTrips}</p>
+                  <p className="text-2xl font-bold text-dark">{earnings?.totalTrips || 0}</p>
                   <p className="text-xs text-gray-500">Trips</p>
                 </div>
                 <div className="bg-gray-bg rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-dark">${earnings.thisWeek.toFixed(0)}</p>
+                  <p className="text-2xl font-bold text-dark">${(earnings?.thisWeek || 0).toFixed(0)}</p>
                   <p className="text-xs text-gray-500">This Week</p>
                 </div>
               </div>
